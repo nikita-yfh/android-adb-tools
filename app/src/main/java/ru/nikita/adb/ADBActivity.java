@@ -110,7 +110,7 @@ public class ADBActivity extends Activity {
 	}
 	public void installAppFromList(View view){
 		Intent intent = new Intent(this, AppListActivity.class);
-		startActivity(intent);
+		startActivityForResult(intent, APP_INSTALL_FILE);
 	}
 
 	@Override
@@ -119,9 +119,10 @@ public class ADBActivity extends Activity {
 			switch (requestCode) {
 			case APP_INSTALL_FILE:
 				if(data != null)  {
-					Uri fileUri = data.getData();
-					new ADBTask(text,adb).installAppFromFile(getSelectedDevice(),fileUri.getPath());
-
+					String filePath = data.getData().getPath();
+					filePath.replace("'","\\'");
+					filePath.replace("\\","\\\\");
+					new ADBTask(text,adb).installAppFromFile(getSelectedDevice(),filePath);
 				}
 				break;
 			}

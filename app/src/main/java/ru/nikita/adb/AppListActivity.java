@@ -1,19 +1,22 @@
 package ru.nikita.adb;
 
 import java.util.List;
-import android.app.ListActivity;
+import android.net.Uri;
 import android.os.Bundle;
-import android.widget.BaseAdapter;
+import android.app.ListActivity;
 import android.content.Context;
+import android.widget.BaseAdapter;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
 public class AppListActivity extends ListActivity{
@@ -23,19 +26,30 @@ public class AppListActivity extends ListActivity{
 
 		PackageManager pm = getPackageManager();
 		List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-		App[] apps = new App[packages.size()];
+		apps = new App[packages.size()];
 		for(int i = 0; i < packages.size(); i++){
 			ApplicationInfo info = packages.get(i);
 			apps[i] = new App(
 				pm.getApplicationLabel(info).toString(),
 				info.packageName,
-				"",
+				info.sourceDir,
 				pm.getApplicationIcon(info)
 			);
 		}
 
 		setListAdapter(new AppListAdapter(this,apps));
     }
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id){
+		super.onListItemClick(l,v,position,id);
+		Intent intent = new Intent();
+		intent.setData(Uri.parse(apps[position].path));
+		setResult(RESULT_OK, intent);
+		finish();
+	}
+
+	private App[] apps;
+
 	private class App {
 		App(String name, String pkg, String path, Drawable icon){
 			this.name=name;
@@ -71,7 +85,7 @@ public class AppListActivity extends ListActivity{
 			viewHolder.iconView.setImageDrawable(app.icon);
 			return view;
 		}
-		private class ViewHolder{
+			private class ViewHolder{
 			public ImageView iconView;
 			public TextView nameView;
 			public TextView pkgView;
