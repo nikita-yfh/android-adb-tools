@@ -1,0 +1,16 @@
+<resources>
+    <string name="appName">ADB tools</string>
+	<string name="updateDeviceList">Update device list</string>
+	<string name="connectDevice">Connect device</string>
+	<string name="disconnectAll">Disconnect all</string>
+	<string name="startServer">Start server</string>
+	<string name="killServer">Kill server</string>
+	<string name="reconnect">Reconnect</string>
+	<string name="reboot">Reboot</string>
+	<string name="installAppFromFile">Install app from file</string>
+	<string name="installAppFromList">Install app from list</string>
+	<string name="tcpip">TCPIP</string>
+	<string name="server">ADB server</string>
+	<string name="apps">App control</string>
+	<string name="device">Device</string>
+</resources>
