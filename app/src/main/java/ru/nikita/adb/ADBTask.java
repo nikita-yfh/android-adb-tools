@@ -29,7 +29,7 @@ class ADBTask extends Task{
 			execute(String.format("-s %s %s", device.id, string));
 	}
 
-	public List<Device> getDeviceList(String output){
+	private List<Device> getDeviceList(){
 		ArrayList<Device>devices=new ArrayList<Device>();
 		String lines[] = log.split("\\n");
 		Pattern pattern = Pattern.compile("^(\\S+)\\s+(\\S+)[\\s\\S]+device:(\\S+)[\\s\\S]+");
@@ -47,7 +47,7 @@ class ADBTask extends Task{
 	protected void onPostExecute(String string){
 		if(deviceList != null){
 			clearDeviceList();
-			List<Device> devices = getDeviceList(string);
+			List<Device> devices = getDeviceList();
 			DeviceListAdapter adapter = new DeviceListAdapter(context, devices);
 			deviceList.setAdapter(adapter);
 		}

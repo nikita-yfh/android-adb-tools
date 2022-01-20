@@ -16,6 +16,7 @@ import android.text.method.DigitsKeyListener;
 import ru.nikita.adb.Binary;
 import ru.nikita.adb.Task;
 import ru.nikita.adb.Device;
+import ru.nikita.adb.AppListActivity;
 
 public class ADBActivity extends Activity {
 	private static final int APP_INSTALL_FILE=1;
@@ -107,6 +108,11 @@ public class ADBActivity extends Activity {
 		chooseFileIntent = Intent.createChooser(chooseFileIntent, "Choose a file");
 		startActivityForResult(chooseFileIntent, APP_INSTALL_FILE);
 	}
+	public void installAppFromList(View view){
+		Intent intent = new Intent(this, AppListActivity.class);
+		startActivity(intent);
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode == Activity.RESULT_OK){

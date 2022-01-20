@@ -13,4 +13,5 @@
 	<string name="server">ADB server</string>
 	<string name="apps">App control</string>
 	<string name="device">Device</string>
+	<string name="appList">App list</string>
 </resources>

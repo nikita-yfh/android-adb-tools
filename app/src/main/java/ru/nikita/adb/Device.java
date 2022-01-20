@@ -2,8 +2,7 @@ package ru.nikita.adb;
 
 import java.lang.String;
 
-
-class Device{
+class Device {
 	Device(String id, String name, String state){
 		this.id=id;
 		this.name=name;
