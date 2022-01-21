@@ -1,6 +1,7 @@
 package ru.nikita.adb;
 
 import java.util.List;
+import java.util.Iterator;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.AsyncTask;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.content.pm.PackageManager;
@@ -23,13 +26,16 @@ import android.graphics.drawable.Drawable;
 
 
 public class AppListActivity extends ListActivity{
-
-	private static int LOAD_APP_LIST = 1;
+	private void updateList(){
+		MenuItem item = menu.findItem(R.id.menu_installed_apps);
+		boolean installed = item.isChecked();
+		new AppLoader().execute(installed);
+	}
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		new AppLoader().execute();
+		new AppLoader().execute(true);
     }
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id){
@@ -39,6 +45,26 @@ public class AppListActivity extends ListActivity{
 		setResult(RESULT_OK, intent);
 		finish();
 	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		getMenuInflater().inflate(R.menu.app_list_activity,menu);
+		this.menu=menu;
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()){
+		case R.id.menu_installed_apps:
+			item.setChecked(!item.isChecked());
+			updateList();
+			return true;
+		case R.id.menu_update_app_list:
+			updateList();
+			return true;
+		}
+		return false;
+	}
+
 
 	private class App {
 		App(String name, String pkg, String path, Drawable icon){
@@ -53,7 +79,7 @@ public class AppListActivity extends ListActivity{
 		public Drawable icon;
 	}
 
-	private class AppLoader extends AsyncTask<Void,Void,App[]>{
+	private class AppLoader extends AsyncTask<Boolean,Void,App[]>{
 		@Override
 		protected void onPreExecute(){
 			pd = new ProgressDialog(AppListActivity.this);
@@ -67,9 +93,19 @@ public class AppListActivity extends ListActivity{
 			pd.dismiss();
 		}
 		@Override
-		protected App[] doInBackground(Void... voids){
+		protected App[] doInBackground(Boolean ... installed){
 			PackageManager pm = getPackageManager();
-			List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+			List<ApplicationInfo> packages = pm.getInstalledApplications(0);
+
+			if(installed[0]){
+				Iterator<ApplicationInfo> it = packages.iterator();
+				while(it.hasNext()){
+					ApplicationInfo info = it.next();
+					if((info.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
+						it.remove();
+				}
+			}
+
 			apps = new App[packages.size()];
 			for(int i = 0; i < packages.size(); i++){
 				ApplicationInfo info = packages.get(i);
@@ -116,6 +152,7 @@ public class AppListActivity extends ListActivity{
 	}
 
 	private App[] apps;
+	private Menu menu;
 }
 
 
