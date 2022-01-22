@@ -155,8 +155,7 @@ public class ADBActivity extends Activity {
 
 		builder.show();
 	}
-
-
+	
 
 	private TextView text;
 	private Binary adb;

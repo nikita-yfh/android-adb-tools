@@ -11,8 +11,7 @@ public class Binary{
 	public Binary(Context context, String name){
 		this.fileName=name;
 		filesDir=context.getFilesDir().getAbsolutePath();
-		String filePath = filesDir + "/" + name;
-		File file = new File(filePath);
+		File file = new File(filesDir,name);
 		if (!file.exists()){
 			try{
 				InputStream asset = context.getAssets().open(name);
@@ -24,7 +23,7 @@ public class Binary{
 				asset.close();
 				output.close();
 
-				Runtime.getRuntime().exec("chmod 777 " + filePath);
+				file.setExecutable(true);
 			} catch (IOException e){
 				e.printStackTrace();
 			}

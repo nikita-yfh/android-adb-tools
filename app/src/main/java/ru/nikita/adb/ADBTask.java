@@ -5,18 +5,21 @@ import ru.nikita.adb.Device;
 import ru.nikita.adb.DeviceListAdapter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.List;
 import java.util.ArrayList;
 import java.lang.String;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.content.Context;
+import android.util.Log;
 
 class ADBTask extends Task{
 	ADBTask(TextView text, Binary binary){
 		super(text,binary);
 		this.deviceList=null;
 		this.context=null;
+	}
+	ADBTask(Binary binary){
+		this(null,binary);
 	}
 	private void clearDeviceList(){
 		if(deviceList != null)
@@ -29,7 +32,7 @@ class ADBTask extends Task{
 			execute(String.format("-s %s %s", device.id, string));
 	}
 
-	private List<Device> getDeviceList(){
+	private Device[] getDeviceList(String log){
 		ArrayList<Device>devices=new ArrayList<Device>();
 		String lines[] = log.split("\\n");
 		Pattern pattern = Pattern.compile("^(\\S+)\\s+(\\S+)[\\s\\S]+device:(\\S+)[\\s\\S]+");
@@ -41,13 +44,14 @@ class ADBTask extends Task{
 					devices.add(new Device(matcher.group(1),matcher.group(3),matcher.group(2)));
 			}
 		}
-		return devices;
+		return devices.toArray(new Device[0]);
 	}
 	@Override
-	protected void onPostExecute(String string){
+	protected void onPostExecute(String log){
 		if(deviceList != null){
 			clearDeviceList();
-			List<Device> devices = getDeviceList();
+			Device[] devices = getDeviceList(log);
+
 			DeviceListAdapter adapter = new DeviceListAdapter(context, devices);
 			deviceList.setAdapter(adapter);
 		}

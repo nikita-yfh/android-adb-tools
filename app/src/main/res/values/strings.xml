@@ -16,4 +16,5 @@
 	<string name="app_list">App list</string>
 	<string name="show_installed_apps">Show only installed apps</string>
 	<string name="update_app_list">Update app list</string>
+	<string name="file_manager">File manager</string>
 </resources>

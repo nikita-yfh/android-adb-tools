@@ -10,17 +10,17 @@ import java.util.List;
 import ru.nikita.adb.Device;
 
 class DeviceListAdapter extends BaseAdapter {
-	DeviceListAdapter(Context context, List<Device> devices){
+	DeviceListAdapter(Context context, Device[] devices){
 		inflter = (LayoutInflater.from(context));
 		this.devices = devices;
 	}
 	@Override
 	public int getCount() {
-		return devices.size();
+		return devices.length;
 	}
 	@Override
 	public Object getItem(int i) {
-		return devices.get(i);
+		return devices[i];
 	}
 	@Override
 	public long getItemId(int i) {
@@ -31,10 +31,10 @@ class DeviceListAdapter extends BaseAdapter {
 		view = inflter.inflate(R.layout.device_list, null);
 		TextView name = (TextView) view.findViewById(R.id.device_name);
 		TextView state = (TextView) view.findViewById(R.id.device_state);
-		name.setText(String.format("%s (%s)",devices.get(i).name,devices.get(i).id));
-		state.setText(devices.get(i).state);
+		name.setText(String.format("%s (%s)",devices[i].name,devices[i].id));
+		state.setText(devices[i].state);
 		return view;
 	}
-	private List<Device> devices;
+	private Device[] devices;
 	private LayoutInflater inflter;
 }
