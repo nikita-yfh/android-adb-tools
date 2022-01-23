@@ -84,7 +84,7 @@ public class AppListActivity extends ListActivity{
 		protected void onPreExecute(){
 			pd = new ProgressDialog(AppListActivity.this);
 			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			pd.setMessage("Loading applications...");
+			pd.setMessage(getResources().getString(R.string.app_loading));
 			pd.show();
 		}
 		@Override

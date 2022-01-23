@@ -29,6 +29,9 @@ public class Binary{
 			}
 		}
 	}
+	public String getName(){
+		return fileName;
+	}
 	protected String[] getCmd(String args) {
 		String exec = String.format("HOME=%s TEMPDIR=%s %s/%s",
 			filesDir,filesDir,filesDir,getReadableCmd(args));

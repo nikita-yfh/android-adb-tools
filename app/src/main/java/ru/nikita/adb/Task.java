@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import ru.nikita.adb.Binary;
 
 public class Task extends AsyncTask<String, String, String> {
-	public class ProcessErrorException extends Exception{
+	public class ProcessErrorException extends RuntimeException{
 		ProcessErrorException(String msg){
 			super(msg);
 		}
@@ -17,6 +17,9 @@ public class Task extends AsyncTask<String, String, String> {
 	public Task(TextView text, Binary binary){
 		this.text=text;
 		this.binary=binary;
+	}
+	public Task(Binary binary){
+		this(null,binary);
 	}
 	@Override
 	protected void onPreExecute(){
@@ -29,7 +32,7 @@ public class Task extends AsyncTask<String, String, String> {
 		if(text != null)
 			text.setText(values[0]);
 	}
-	protected String executeNow(String args) throws ProcessErrorException{
+	protected String executeNow(String args) {
 		String out = "";
 		String err = "";
 		try{

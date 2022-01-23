@@ -31,6 +31,12 @@ class ADBTask extends Task{
 		else
 			execute(String.format("-s %s %s", device.id, string));
 	}
+	public String executeNow(Device device, String string){
+		if(device == null)
+			return executeNow(string);
+		else
+			return executeNow(String.format("-s %s %s", device.id, string));
+	}
 
 	private Device[] getDeviceList(String log){
 		ArrayList<Device>devices=new ArrayList<Device>();
@@ -79,6 +85,9 @@ class ADBTask extends Task{
 	}
 	public void tcpip(Device device, String port){
 		execute(device,"tcpip "+port);
+	}
+	public String shell(Device device, String args){
+		return executeNow(device, String.format("shell \"%s\"", args));
 	}
 
 	private Context context;

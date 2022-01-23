@@ -17,6 +17,7 @@ import ru.nikita.adb.Binary;
 import ru.nikita.adb.Task;
 import ru.nikita.adb.Device;
 import ru.nikita.adb.AppListActivity;
+import ru.nikita.adb.FileManagerActivity;
 
 public class ADBActivity extends Activity {
 	private static final int APP_INSTALL_FILE=1;
@@ -41,14 +42,14 @@ public class ADBActivity extends Activity {
 	}
 	public void connectDevice(View view){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Device IP address");
+		builder.setTitle(R.string.ip);
 
 		final EditText input = new EditText(this);
 		input.setInputType(InputType.TYPE_CLASS_TEXT);
 		input.setKeyListener(DigitsKeyListener.getInstance("0123456789."));
 		builder.setView(input);
 
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String ip=input.getText().toString();
@@ -56,7 +57,7 @@ public class ADBActivity extends Activity {
 				updateDeviceList(null);
 			}
 		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
@@ -82,19 +83,19 @@ public class ADBActivity extends Activity {
 
 	public void reboot(View view){
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
-		b.setTitle("Reboot");
-		final String[] types = {
+		b.setTitle(R.string.reboot);
+		final String[] items = {
 			"system",
 			"bootloader",
 			"recovery",
 			"sideload",
 			"sideload-auto-reboot"
 		};
-		b.setItems(types, new DialogInterface.OnClickListener() {
+		b.setItems(R.array.reboot, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which){
 				dialog.dismiss();
-				String system = (which==0)?"":types[which];
+				String system = (which==0)?"":items[which];
 				new ADBTask(text,adb).reboot(getSelectedDevice(),system);
 			}
 		});
@@ -105,12 +106,20 @@ public class ADBActivity extends Activity {
 		chooseFileIntent.setType("application/vnd.android.package-archive");
 		chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
 
-		chooseFileIntent = Intent.createChooser(chooseFileIntent, "Choose a file");
+		chooseFileIntent = Intent.createChooser(chooseFileIntent, getResources().getString(R.string.file_choose));
 		startActivityForResult(chooseFileIntent, APP_INSTALL_FILE);
 	}
 	public void installAppFromList(View view){
 		Intent intent = new Intent(this, AppListActivity.class);
 		startActivityForResult(intent, APP_INSTALL_FILE);
+	}
+	public void fileManager(View view){
+		Intent intent = new Intent(this, FileManagerActivity.class);
+		intent.putExtra("adb", adb.getName());
+		Device selected = getSelectedDevice();
+		if(selected != null)
+			intent.putExtra("device", selected.id);
+		startActivity(intent);
 	}
 
 	@Override
@@ -120,8 +129,6 @@ public class ADBActivity extends Activity {
 			case APP_INSTALL_FILE:
 				if(data != null)  {
 					String filePath = data.getData().getPath();
-					filePath.replace("'","\\'");
-					filePath.replace("\\","\\\\");
 					new ADBTask(text,adb).installAppFromFile(getSelectedDevice(),filePath);
 				}
 				break;
@@ -131,14 +138,14 @@ public class ADBActivity extends Activity {
 	}
 	public void tcpip(View view){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Input port");
+		builder.setTitle(R.string.port);
 
 		final EditText input = new EditText(this);
 		input.setInputType(InputType.TYPE_CLASS_NUMBER);
 		input.setHint("5555");
 		builder.setView(input);
 
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String port=input.getText().toString();
@@ -146,7 +153,7 @@ public class ADBActivity extends Activity {
 				new ADBTask(text,adb).tcpip(getSelectedDevice(),port);
 			}
 		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();

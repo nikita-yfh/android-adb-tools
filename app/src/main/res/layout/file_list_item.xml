@@ -3,24 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
 	android:orientation="horizontal"
-	android:padding="8dp">
+	android:padding="4dp">
     <ImageView
         android:id="@+id/file_icon"
-        android:layout_width="48dp"
-		android:layout_height="48dp"/>
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
+        android:layout_width="32dp"
+		android:layout_height="32dp"/>
+	<TextView
+		android:id="@+id/file_name"
+		android:layout_weight="1"
 		android:gravity="center_vertical"
-		android:layout_marginLeft="10dp">
-		<TextView
-			android:id="@+id/file_name"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
-		<TextView
-			android:id="@+id/file_description"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
-	</LinearLayout>
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent" />
 </LinearLayout>

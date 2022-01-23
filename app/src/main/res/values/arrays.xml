@@ -1,0 +1,10 @@
+<resources>
+	<string-array name="reboot">
+		<item>@string/reboot_system</item>
+		<item>@string/reboot_recovery</item>
+		<item>@string/reboot_bootloader</item>
+		<item>@string/reboot_sideload</item>
+		<item>@string/reboot_sideload_auto_reboot</item>
+	</string-array>
+</resources>
+

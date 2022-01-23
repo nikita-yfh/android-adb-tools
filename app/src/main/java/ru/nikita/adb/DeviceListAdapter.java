@@ -28,7 +28,7 @@ class DeviceListAdapter extends BaseAdapter {
 	}
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-		view = inflter.inflate(R.layout.device_list, null);
+		view = inflter.inflate(R.layout.device_list_item, null);
 		TextView name = (TextView) view.findViewById(R.id.device_name);
 		TextView state = (TextView) view.findViewById(R.id.device_state);
 		name.setText(String.format("%s (%s)",devices[i].name,devices[i].id));
