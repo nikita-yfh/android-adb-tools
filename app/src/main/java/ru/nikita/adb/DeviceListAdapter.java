@@ -31,7 +31,7 @@ class DeviceListAdapter extends BaseAdapter {
 		view = inflter.inflate(R.layout.device_list_item, null);
 		TextView name = (TextView) view.findViewById(R.id.device_name);
 		TextView state = (TextView) view.findViewById(R.id.device_state);
-		name.setText(String.format("%s (%s)",devices[i].name,devices[i].id));
+		name.setText(devices[i].id);
 		state.setText(devices[i].state);
 		return view;
 	}

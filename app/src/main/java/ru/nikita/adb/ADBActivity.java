@@ -85,18 +85,17 @@ public class ADBActivity extends Activity {
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
 		b.setTitle(R.string.reboot);
 		final String[] items = {
-			"system",
+			"",
 			"bootloader",
 			"recovery",
 			"sideload",
 			"sideload-auto-reboot"
 		};
-		b.setItems(R.array.reboot, new DialogInterface.OnClickListener() {
+		b.setItems(R.array.adb_reboot, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which){
 				dialog.dismiss();
-				String system = (which==0)?"":items[which];
-				new ADBTask(text,adb).reboot(getSelectedDevice(),system);
+				new ADBTask(text,adb).reboot(getSelectedDevice(), items[which]);
 			}
 		});
 		b.show();
@@ -124,14 +123,10 @@ public class ADBActivity extends Activity {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode == Activity.RESULT_OK){
-			switch (requestCode) {
-			case APP_INSTALL_FILE:
-				if(data != null)  {
-					String filePath = data.getData().getPath();
-					new ADBTask(text,adb).installAppFromFile(getSelectedDevice(),filePath);
-				}
-				break;
+		if(resultCode == Activity.RESULT_OK && data != null){
+			if(requestCode == APP_INSTALL_FILE){
+				String filePath = data.getData().getPath();
+				new ADBTask(text,adb).installAppFromFile(getSelectedDevice(),filePath);
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);

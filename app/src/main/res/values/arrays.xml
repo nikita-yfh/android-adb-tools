@@ -1,10 +1,23 @@
 <resources>
-	<string-array name="reboot">
+	<string-array name="adb_reboot">
 		<item>@string/reboot_system</item>
-		<item>@string/reboot_recovery</item>
 		<item>@string/reboot_bootloader</item>
+		<item>@string/reboot_recovery</item>
 		<item>@string/reboot_sideload</item>
 		<item>@string/reboot_sideload_auto_reboot</item>
+	</string-array>
+	<string-array name="fastboot_reboot">
+		<item>@string/reboot_system</item>
+		<item>@string/reboot_bootloader</item>
+		<item>@string/reboot_recovery</item>
+	</string-array>
+	<string-array name="partitions">
+		<item>system</item>
+		<item>userdata</item>
+		<item>recovery</item>
+		<item>boot</item>
+		<item>cache</item>
+		<item>radio</item>
 	</string-array>
 </resources>
 

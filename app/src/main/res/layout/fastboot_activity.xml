@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		android:layout_weight="3"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Spinner
+                    android:id="@+id/device"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:spinnerMode="dialog" />
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="updateDeviceList"
+					android:text="@string/update_device_list" />
+            </LinearLayout>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:text="@string/device" />
+			<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="reboot"
+                    android:layout_weight="1"
+					android:text="@string/reboot" />
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="boot"
+                    android:layout_weight="1"
+					android:text="@string/boot" />
+            </LinearLayout>
+			<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+                    android:layout_weight="1"
+					android:text="@string/partition" />
+				<Spinner
+					android:id="@+id/partition"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:entries="@array/partitions" />
+            </LinearLayout>
+			<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="flash"
+                    android:layout_weight="1"
+					android:text="@string/flash" />
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="erase"
+                    android:layout_weight="1"
+					android:text="@string/erase" />
+			</LinearLayout>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:text="@string/flashing" />
+			<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="flashingUnlock"
+                    android:layout_weight="1"
+					android:text="@string/flashing_unlock" />
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="flashingLock"
+                    android:layout_weight="1"
+					android:text="@string/flashing_lock" />
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+	<ScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:scrollbars="vertical"
+		android:layout_weight="1"
+		android:padding="5dp"
+		android:fillViewport="true">
+
+		<TextView
+			android:padding="5dp"
+			android:id="@+id/log"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:background="@android:color/black"
+			android:textColor="@android:color/white"/>
+	</ScrollView>
+</LinearLayout>

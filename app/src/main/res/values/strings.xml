@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">ADB tools</string>
-	<string name="update_device_list">Update device list</string>
+    <string name="app_name">ADB &amp; Fastboot tools</string>
+	<string name="adb">ADB</string>
+	<string name="fastboot">Fastboot</string>
+	<string name="update_device_list">Update</string>
 	<string name="connect_device">Connect device</string>
 	<string name="disconnect_all">Disconnect all</string>
 	<string name="start_server">Start server</string>
@@ -31,4 +33,13 @@
 	<string name="reboot_bootloader">Fastboot</string>
 	<string name="reboot_sideload">Sideload</string>
 	<string name="reboot_sideload_auto_reboot">Sideload (Auto reboot)</string>
+	<string name="rom_choose">Choose ROM</string>
+	<string name="boot">Boot ROM</string>
+	<string name="flash">Flash</string>
+	<string name="erase">Erase</string>
+	<string name="partition">Partition</string>
+	<string name="flashing">Flashing</string>
+	<string name="flashing_unlock">Unlock</string>
+	<string name="flashing_lock">Lock</string>
+	<string name="oem">OEM</string>
 </resources>

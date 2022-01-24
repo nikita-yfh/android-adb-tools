@@ -5,8 +5,10 @@ import android.content.res.AssetManager;
 import android.content.Context;
 import android.widget.TextView;
 import android.os.AsyncTask;
+import ru.nikita.adb.Device;
 import java.io.InputStreamReader;
 import ru.nikita.adb.Binary;
+import ru.nikita.adb.Device;
 
 public class Task extends AsyncTask<String, String, String> {
 	public class ProcessErrorException extends RuntimeException{
@@ -32,6 +34,19 @@ public class Task extends AsyncTask<String, String, String> {
 		if(text != null)
 			text.setText(values[0]);
 	}
+	public void execute(Device device, String string){
+		if(device == null)
+			execute(string);
+		else
+			execute(String.format("-s %s %s", device.id, string));
+	}
+	public String executeNow(Device device, String string){
+		if(device == null)
+			return executeNow(string);
+		else
+			return executeNow(String.format("-s %s %s", device.id, string));
+	}
+
 	protected String executeNow(String args) {
 		String out = "";
 		String err = "";

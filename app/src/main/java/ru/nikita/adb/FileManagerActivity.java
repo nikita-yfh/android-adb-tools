@@ -44,7 +44,7 @@ public class FileManagerActivity extends ListActivity{
 		ListView lv = getListView();
 		registerForContextMenu(lv);
 		history = new ArrayList<ADBFile>();
-		updateFileList(new ADBFile(adb, device, "/sdcard/"), false);
+		updateFileList(new ADBFile(adb, device, "/sdcard"), false);
 	}
 	private void updateFileList(ADBFile file, boolean saveHistory){
 		try{
@@ -63,8 +63,8 @@ public class FileManagerActivity extends ListActivity{
 	}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode == Activity.RESULT_OK){
-			if(requestCode == FILE_PUSH && data != null){
+		if(resultCode == Activity.RESULT_OK && data != null){
+			if(requestCode == FILE_PUSH){
 				String filePath = data.getData().getPath();
 				new ADBTask(adb){
 					@Override
@@ -164,7 +164,9 @@ public class FileManagerActivity extends ListActivity{
 			builder.show();
 			return true;
 		}else if(id == R.id.file_pull){
-			fileList[info.position].pull("/sdcard/");
+			File dir = new File("/sdcard/ADB");
+			dir.mkdir();
+			fileList[info.position].pull(dir.getPath());
 			return true;
 		}
 

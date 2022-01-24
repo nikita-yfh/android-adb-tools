@@ -25,29 +25,16 @@ class ADBTask extends Task{
 		if(deviceList != null)
 			deviceList.setAdapter(null);
 	}
-	public void execute(Device device, String string){
-		if(device == null)
-			execute(string);
-		else
-			execute(String.format("-s %s %s", device.id, string));
-	}
-	public String executeNow(Device device, String string){
-		if(device == null)
-			return executeNow(string);
-		else
-			return executeNow(String.format("-s %s %s", device.id, string));
-	}
-
 	private Device[] getDeviceList(String log){
 		ArrayList<Device>devices=new ArrayList<Device>();
 		String lines[] = log.split("\\n");
-		Pattern pattern = Pattern.compile("^(\\S+)\\s+(\\S+)[\\s\\S]+device:(\\S+)[\\s\\S]+");
+		Pattern pattern = Pattern.compile("^(\\S+)\\s+(\\S+)");
 		Matcher matcher;
 		for(String line : lines){
 			if (line.matches(pattern.pattern())) {
 				matcher = pattern.matcher(line);
 				if (matcher.find())
-					devices.add(new Device(matcher.group(1),matcher.group(3),matcher.group(2)));
+					devices.add(new Device(matcher.group(1),matcher.group(2)));
 			}
 		}
 		return devices.toArray(new Device[0]);
@@ -66,7 +53,7 @@ class ADBTask extends Task{
 	public void listDevices(Context context, Spinner deviceList){
 		this.context=context;
 		this.deviceList=deviceList;
-		execute("devices -l");
+		execute("devices");
 	}
 	public void reboot(Device device, String arg){
 		execute(device,"reboot "+arg);
