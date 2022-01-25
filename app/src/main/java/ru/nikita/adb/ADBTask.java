@@ -68,6 +68,7 @@ class ADBTask extends Task{
 		execute(String.format("push '%s' '%s'",src,dest));
 	}
 	public void pull(Device device, String src, String dest){
+		Log.v("adb", String.format("pull '%s' '%s'",src,dest));
 		execute(String.format("pull '%s' '%s'",src,dest));
 	}
 	public void tcpip(Device device, String port){

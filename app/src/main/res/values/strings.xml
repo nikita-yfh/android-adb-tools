@@ -23,7 +23,7 @@
 	<string name="file_manager">File manager</string>
 	<string name="file_delete">Delete</string>
 	<string name="file_rename">Rename</string>
-	<string name="file_pull">Copy to /sdcard/</string>
+	<string name="file_pull">Copy to /sdcard/ADB/</string>
 	<string name="file_choose">Choose file</string>
 	<string name="file_directory">Choose directory</string>
 	<string name="file_delete_confirm">Delete?</string>

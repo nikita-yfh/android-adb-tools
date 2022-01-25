@@ -49,7 +49,10 @@ public class ADBFile {
 			fileList[i] = fileList[i].trim();
 			char flag = fileList[i].charAt(0);
 			boolean isDir = (flag == 'd' || flag == 'l');
-			String[] words = fileList[i].split(" ", 8);
+			String[] words = fileList[i].split("\\s+", 8);
+			Log.v("adb", "string: " + fileList[i]);
+			for(String log : words)
+				Log.v("adb", log);
 			files[i] = new ADBFile(m_adb, m_device, words[7], isDir);
 		}
 		return files;

@@ -39,8 +39,8 @@ public class FileManagerActivity extends ListActivity{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
-		adb = new Binary(getApplicationContext(), intent.getStringExtra("adb"));
-		device = new Device(intent.getStringExtra("device"));
+		adb = (Binary) getIntent().getSerializableExtra("adb");
+		device = (Device) getIntent().getSerializableExtra("device");
 		ListView lv = getListView();
 		registerForContextMenu(lv);
 		history = new ArrayList<ADBFile>();

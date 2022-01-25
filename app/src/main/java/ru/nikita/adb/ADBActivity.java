@@ -114,10 +114,10 @@ public class ADBActivity extends Activity {
 	}
 	public void fileManager(View view){
 		Intent intent = new Intent(this, FileManagerActivity.class);
-		intent.putExtra("adb", adb.getName());
-		Device selected = getSelectedDevice();
-		if(selected != null)
-			intent.putExtra("device", selected.id);
+		Bundle bundle = new Bundle();
+		bundle.putSerializable("adb", adb);
+		bundle.putSerializable("device", getSelectedDevice());
+		intent.putExtras(bundle);
 		startActivity(intent);
 	}
 

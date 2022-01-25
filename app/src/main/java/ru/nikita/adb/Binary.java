@@ -3,11 +3,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import android.content.res.AssetManager;
 import android.content.Context;
 
-
-public class Binary{
+public class Binary implements Serializable{
 	public Binary(Context context, String name){
 		this.fileName=name;
 		filesDir=context.getFilesDir().getAbsolutePath();

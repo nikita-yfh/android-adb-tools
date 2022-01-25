@@ -1,8 +1,9 @@
 package ru.nikita.adb;
 
 import java.lang.String;
+import java.io.Serializable;
 
-class Device {
+class Device implements Serializable{
 	Device(String id){
 		this(id, null);
 	}
