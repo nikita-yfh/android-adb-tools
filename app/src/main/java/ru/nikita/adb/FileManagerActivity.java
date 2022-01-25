@@ -54,7 +54,7 @@ public class FileManagerActivity extends ListActivity{
 			fileList = file.listFiles();
 			setListAdapter(new FileListAdapter(this, fileList));
 			setTitle(file.getPath());
-		}catch(Task.ProcessErrorException e){
+		}catch(Exception e){
 			makeToast(e.toString());
 		}
 	}
@@ -125,7 +125,7 @@ public class FileManagerActivity extends ListActivity{
 					try{
 						fileList[info.position].delete();
 						updateFileList(currentFile, false);
-					}catch(Task.ProcessErrorException e){
+					}catch(Exception e){
 						makeToast(e.toString());
 					}
 				}

@@ -6,6 +6,6 @@
 		android:checked="true"
 		android:title="@string/show_installed_apps" />
 	<item 
-        android:id="@+id/menu_update_app_list"
-		android:title="@string/update_app_list" />
+        android:id="@+id/menu_refresh_apps"
+		android:title="@string/refresh_apps" />
 </menu>

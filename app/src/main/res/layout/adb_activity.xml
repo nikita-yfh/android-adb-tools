@@ -28,8 +28,8 @@
 				<Button
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
-					android:onClick="updateDeviceList"
-					android:text="@string/update_device_list" />
+					android:onClick="refreshDeviceList"
+					android:text="@string/refresh_devices" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"

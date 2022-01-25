@@ -28,8 +28,8 @@
 				<Button
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
-					android:onClick="updateDeviceList"
-					android:text="@string/update_device_list" />
+					android:onClick="refreshDeviceList"
+					android:text="@string/refresh_devices" />
             </LinearLayout>
 			<TextView
 				android:layout_width="wrap_content"
@@ -103,6 +103,32 @@
                     android:layout_weight="1"
 					android:text="@string/flashing_lock" />
 			</LinearLayout>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:text="@string/oem" />
+			<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="oemUnlock"
+                    android:layout_weight="1"
+					android:text="@string/oem_unlock" />
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:onClick="oemLock"
+                    android:layout_weight="1"
+					android:text="@string/oem_lock" />
+			</LinearLayout>
+			<Button
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:onClick="oemDeviceInfo"
+				android:text="@string/oem_device_info" />
 		</LinearLayout>
 	</ScrollView>
 	<ScrollView

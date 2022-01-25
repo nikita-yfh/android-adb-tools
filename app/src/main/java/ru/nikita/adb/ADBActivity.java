@@ -29,7 +29,7 @@ public class ADBActivity extends Activity {
 		text = (TextView)findViewById(R.id.log);
 
 		adb = new Binary(getApplicationContext(), "adb");
-		updateDeviceList(null);
+		refreshDeviceList(null);
     }
 	protected Spinner getDeviceList(){
 		return (Spinner)findViewById(R.id.device);
@@ -37,7 +37,7 @@ public class ADBActivity extends Activity {
 	protected Device getSelectedDevice(){
 		return (Device)getDeviceList().getSelectedItem();
 	}
-	public void updateDeviceList(View view){
+	public void refreshDeviceList(View view){
 		new ADBTask(text,adb).listDevices(this,getDeviceList());
 	}
 	public void connectDevice(View view){
@@ -54,7 +54,7 @@ public class ADBActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				String ip=input.getText().toString();
 				new ADBTask(text,adb).connectDevice(ip);
-				updateDeviceList(null);
+				refreshDeviceList(null);
 			}
 		});
 		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -68,7 +68,7 @@ public class ADBActivity extends Activity {
 	}
 	public void disconnectAll(View view){
 		new ADBTask(text,adb).execute("disconnect");
-		updateDeviceList(null);
+		refreshDeviceList(null);
 	}
 	public void startServer(View view){
 		new ADBTask(text,adb).execute("start-server");
@@ -78,7 +78,7 @@ public class ADBActivity extends Activity {
 	}
 	public void reconnect(View view){
 		new ADBTask(text,adb).execute("reconnect");
-		updateDeviceList(null);
+		refreshDeviceList(null);
 	}
 
 	public void reboot(View view){

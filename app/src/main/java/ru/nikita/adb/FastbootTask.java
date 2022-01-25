@@ -59,6 +59,9 @@ class FastbootTask extends Task{
 	public void boot(Device device, String file){
 		execute(device, String.format("boot '%s'", file));
 	}
+	public void oemUnlock(Device device, String code){
+		execute(device, "oem unlock " + code);
+	}
 
 	private Context context;
 	private Spinner deviceList;

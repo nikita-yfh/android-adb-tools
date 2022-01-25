@@ -58,7 +58,7 @@ public class AppListActivity extends ListActivity{
 			item.setChecked(!item.isChecked());
 			updateList();
 			return true;
-		case R.id.menu_update_app_list:
+		case R.id.menu_refresh_apps:
 			updateList();
 			return true;
 		}

@@ -36,11 +36,21 @@ public class ADBFile {
 	}
 
 	public ADBFile[] listFiles(){
-		String[] fileList = new ADBTask(m_adb).shell(m_device, 
-			String.format("find '%s' -maxdepth 1 -mindepth 1", m_path)).split("\n");
+		String lsout = "";
+		try{ lsout += new ADBTask(m_adb).shell(m_device, String.format("cd / && ls -ldA '%s'/*", m_path));
+		}catch(Exception e){}
+		try{ lsout += new ADBTask(m_adb).shell(m_device, String.format("cd / && ls -ldA '%s'/.*", m_path));
+		}catch(Exception e){}
+		
+		String[] fileList = lsout.split("\n");
+
 		ADBFile[] files = new ADBFile[fileList.length-1];
 		for(int i = 0; i < fileList.length-1 ; i++){
-			files[i] = new ADBFile(m_adb, m_device, fileList[i]);
+			fileList[i] = fileList[i].trim();
+			char flag = fileList[i].charAt(0);
+			boolean isDir = (flag == 'd' || flag == 'l');
+			String[] words = fileList[i].split(" ", 8);
+			files[i] = new ADBFile(m_adb, m_device, words[7], isDir);
 		}
 		return files;
 	}
