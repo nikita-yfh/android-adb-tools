@@ -6,9 +6,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-		android:layout_weight="3"
-        tools:ignore="UselessParent">
+		android:layout_height="wrap_content"
+		android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -122,9 +121,8 @@
 	</ScrollView>
 	<ScrollView
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="200dp"
 		android:scrollbars="vertical"
-		android:layout_weight="1"
 		android:padding="5dp"
 		android:fillViewport="true">
 

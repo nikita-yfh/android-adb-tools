@@ -7,8 +7,7 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-		android:layout_weight="3"
-        tools:ignore="UselessParent">
+		android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,6 +35,11 @@
 				android:layout_height="match_parent"
 				android:layout_weight="1"
 				android:text="@string/device" />
+			<Button
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:onClick="deviceInfoAll"
+				android:text="@string/device_info_all" />
 			<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -108,6 +112,11 @@
 				android:layout_height="match_parent"
 				android:layout_weight="1"
 				android:text="@string/oem" />
+			<Button
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:onClick="oemDeviceInfo"
+				android:text="@string/oem_device_info" />
 			<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -124,16 +133,11 @@
                     android:layout_weight="1"
 					android:text="@string/oem_lock" />
 			</LinearLayout>
-			<Button
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:onClick="oemDeviceInfo"
-				android:text="@string/oem_device_info" />
 		</LinearLayout>
 	</ScrollView>
 	<ScrollView
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="200dp"
 		android:scrollbars="vertical"
 		android:layout_weight="1"
 		android:padding="5dp"

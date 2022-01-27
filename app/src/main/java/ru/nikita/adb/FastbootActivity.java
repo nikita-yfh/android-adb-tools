@@ -124,9 +124,11 @@ public class FastbootActivity extends Activity {
 		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "oem lock");
 	}
 	public void oemDeviceInfo(View view){
-		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "oem device info");
+		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "oem device-info");
 	}
-
+	public void deviceInfoAll(View view){
+		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "getvar all");
+	}
 
 	private TextView text;
 	private Binary fastboot;

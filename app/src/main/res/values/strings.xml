@@ -44,6 +44,7 @@
 	<string name="oem">OEM</string>
 	<string name="oem_unlock">Unlock</string>
 	<string name="oem_lock">Lock</string>
-	<string name="oem_device_info">Device info</string>
+	<string name="oem_device_info">Bootloader info</string>
 	<string name="oem_code">Input OEM code</string>
+	<string name="device_info_all">Device info</string>
 </resources>
