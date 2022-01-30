@@ -3,6 +3,8 @@ package ru.nikita.adb;
 import android.os.Bundle;
 import android.net.Uri;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.widget.TextView;
@@ -19,6 +21,7 @@ import ru.nikita.adb.Device;
 import ru.nikita.adb.AppListActivity;
 import ru.nikita.adb.FileManagerActivity;
 import ru.nikita.adb.AppManagerActivity;
+import ru.nikita.adb.FastbootActivity;
 
 public class ADBActivity extends Activity {
 	private static final int APP_INSTALL_FILE=1;
@@ -32,6 +35,21 @@ public class ADBActivity extends Activity {
 		adb = new Binary(getApplicationContext(), "adb");
 		refreshDeviceList(null);
     }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		getMenuInflater().inflate(R.menu.adb_activity, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		int id = item.getItemId();
+		if(id == R.id.fastboot){
+			Intent intent = new Intent(this, FastbootActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		return false;
+	}
 	protected Spinner getDeviceList(){
 		return (Spinner)findViewById(R.id.device);
 	}
