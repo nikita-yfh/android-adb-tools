@@ -117,6 +117,11 @@
                     android:layout_weight="1"
 					android:text="@string/install_app_from_list" />
 			</LinearLayout>
+			<Button
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:onClick="appManager"
+				android:text="@string/app_manager" />
 		</LinearLayout>
 	</ScrollView>
 	<ScrollView

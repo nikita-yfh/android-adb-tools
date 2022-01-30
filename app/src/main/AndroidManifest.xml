@@ -28,6 +28,10 @@
 			android:name=".FileManagerActivity"
 			android:label="@string/file_manager">
 		</activity>
+		<activity 
+			android:name=".AppManagerActivity"
+			android:label="@string/app_manager">
+		</activity>
     </application>
 
 </manifest>

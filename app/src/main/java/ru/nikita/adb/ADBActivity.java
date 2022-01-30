@@ -18,6 +18,7 @@ import ru.nikita.adb.Task;
 import ru.nikita.adb.Device;
 import ru.nikita.adb.AppListActivity;
 import ru.nikita.adb.FileManagerActivity;
+import ru.nikita.adb.AppManagerActivity;
 
 public class ADBActivity extends Activity {
 	private static final int APP_INSTALL_FILE=1;
@@ -114,6 +115,14 @@ public class ADBActivity extends Activity {
 	}
 	public void fileManager(View view){
 		Intent intent = new Intent(this, FileManagerActivity.class);
+		Bundle bundle = new Bundle();
+		bundle.putSerializable("adb", adb);
+		bundle.putSerializable("device", getSelectedDevice());
+		intent.putExtras(bundle);
+		startActivity(intent);
+	}
+	public void appManager(View view){
+		Intent intent = new Intent(this, AppManagerActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putSerializable("adb", adb);
 		bundle.putSerializable("device", getSelectedDevice());

@@ -26,7 +26,7 @@ class ADBTask extends Task{
 			deviceList.setAdapter(null);
 	}
 	private Device[] getDeviceList(String log){
-		ArrayList<Device>devices=new ArrayList<Device>();
+		ArrayList<Device> devices = new ArrayList<Device>();
 		String lines[] = log.split("\\n");
 		Pattern pattern = Pattern.compile("^(\\S+)\\s+(\\S+)");
 		Matcher matcher;
@@ -74,8 +74,11 @@ class ADBTask extends Task{
 	public void tcpip(Device device, String port){
 		execute(device,"tcpip "+port);
 	}
-	public String shell(Device device, String args){
+	public String shellNow(Device device, String args){
 		return executeNow(device, String.format("shell \"%s\"", args));
+	}
+	public void shell(Device device, String args){
+		execute(device, String.format("shell \"%s\"", args));
 	}
 
 	private Context context;

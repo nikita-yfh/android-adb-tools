@@ -37,9 +37,9 @@ public class ADBFile {
 
 	public ADBFile[] listFiles(){
 		String lsout = "";
-		try{ lsout += new ADBTask(m_adb).shell(m_device, String.format("cd / && ls -ldA '%s'/*", m_path));
+		try{ lsout += new ADBTask(m_adb).shellNow(m_device, String.format("cd / && ls -ldA '%s'/*", m_path));
 		}catch(Exception e){}
-		try{ lsout += new ADBTask(m_adb).shell(m_device, String.format("cd / && ls -ldA '%s'/.*", m_path));
+		try{ lsout += new ADBTask(m_adb).shellNow(m_device, String.format("cd / && ls -ldA '%s'/.*", m_path));
 		}catch(Exception e){}
 		
 		String[] fileList = lsout.split("\n");

@@ -21,6 +21,7 @@
 	<string name="show_installed_apps">Show only installed apps</string>
 	<string name="refresh_apps">Refresh</string>
 	<string name="file_manager">File manager</string>
+	<string name="app_manager">App manager</string>
 	<string name="file_delete">Delete</string>
 	<string name="file_rename">Rename</string>
 	<string name="file_pull">Copy to /sdcard/ADB/</string>
@@ -47,4 +48,9 @@
 	<string name="oem_device_info">Bootloader info</string>
 	<string name="oem_code">Input OEM code</string>
 	<string name="device_info_all">Device info</string>
+	<string name="app_uninstall_data">Uninstall with data</string>
+	<string name="app_uninstall">Uninstall without data</string>
+	<string name="app_install">Install</string>
+	<string name="app_uninstalling">Uninstalling...</string>
+	<string name="app_installing">Installing...</string>
 </resources>
