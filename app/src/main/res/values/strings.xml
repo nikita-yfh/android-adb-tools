@@ -53,4 +53,6 @@
 	<string name="app_install">Install</string>
 	<string name="app_uninstalling">Uninstalling...</string>
 	<string name="app_installing">Installing...</string>
+	<string name="command_line">Command line</string>
+	<string name="execute">Execute</string>
 </resources>

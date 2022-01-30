@@ -145,6 +145,11 @@ public class FastbootActivity extends Activity {
 	public void deviceInfoAll(View view){
 		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "getvar all");
 	}
+	public void executeCommand(View view){
+		EditText command = (EditText)findViewById(R.id.command);
+		new FastbootTask(text,fastboot).execute(getSelectedDevice(), command.getText().toString());
+	}
+
 	private class DeviceListTask extends FastbootTask{
 		public DeviceListTask(TextView text, Binary binary){
 			super(text, binary);

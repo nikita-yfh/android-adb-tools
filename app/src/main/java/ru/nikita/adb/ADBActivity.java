@@ -204,7 +204,10 @@ public class ADBActivity extends Activity {
 
 		builder.show();
 	}
-
+	public void executeCommand(View view){
+		EditText command = (EditText)findViewById(R.id.command);
+		new ADBTask(text,adb).execute(getSelectedDevice(), command.getText().toString());
+	}
 	private class DeviceListTask extends ADBTask{
 		public DeviceListTask(TextView text, Binary binary){
 			super(text, binary);

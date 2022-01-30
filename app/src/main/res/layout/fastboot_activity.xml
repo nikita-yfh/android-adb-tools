@@ -138,6 +138,23 @@
 						android:layout_weight="1"
 						android:text="@string/oem_lock" />
 				</LinearLayout>
+				<LinearLayout
+					android:focusable="true"
+					android:focusableInTouchMode="true"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<EditText
+						android:id="@+id/command"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:layout_weight="1" />
+					<Button
+						android:text="@string/execute"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:onClick="executeCommand"
+						android:layout_weight="0" />
+				</LinearLayout>
 			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
