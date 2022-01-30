@@ -2,6 +2,7 @@ package ru.nikita.adb;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.widget.TextView;
@@ -46,11 +47,26 @@ public class FastbootActivity extends Activity {
 	protected Spinner getDeviceList(){
 		return (Spinner)findViewById(R.id.device);
 	}
+	protected void setDeviceList(DeviceListAdapter adapter){
+		Spinner spinner = getDeviceList();
+		spinner.setAdapter(adapter);
+	}
+	protected void clearDeviceList(){
+		setDeviceList(null);
+	}
 	protected Device getSelectedDevice(){
 		return (Device)getDeviceList().getSelectedItem();
 	}
 	public void refreshDeviceList(View view){
-		new FastbootTask(text,fastboot).listDevices(this,getDeviceList());
+		new DeviceListTask(text,fastboot).execute();
+	}
+	private void disableEnableControls(boolean enable, ViewGroup vg){
+		for (int i = 0; i < vg.getChildCount(); i++){
+			View child = vg.getChildAt(i);
+			child.setEnabled(enable);
+			if (child instanceof ViewGroup)
+				disableEnableControls(enable, (ViewGroup)child);
+		}
 	}
 	public void reboot(View view){
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
@@ -128,6 +144,34 @@ public class FastbootActivity extends Activity {
 	}
 	public void deviceInfoAll(View view){
 		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "getvar all");
+	}
+	private class DeviceListTask extends FastbootTask{
+		public DeviceListTask(TextView text, Binary binary){
+			super(text, binary);
+		}
+
+		@Override
+		protected void onPostExecute(String log){
+			clearDeviceList();
+			Device[] devices = getDeviceList(log);
+
+			disableEnableControls(devices.length > 0, (ViewGroup)findViewById(R.id.controls));
+
+			DeviceListAdapter adapter = new DeviceListAdapter(FastbootActivity.this, devices);
+			setDeviceList(adapter);
+		}
+
+		public void execute(){
+			execute("devices");
+		}
+		private Device[] getDeviceList(String log){
+			String words[] = log.split(" |\\n");
+			Device[] devices = new Device[words.length/2];
+
+			for(int i = 0; i < devices.length; i++)
+				devices[i] = new Device(words[i*2], words[i*2+1]);
+			return devices;
+		}
 	}
 
 	private TextView text;

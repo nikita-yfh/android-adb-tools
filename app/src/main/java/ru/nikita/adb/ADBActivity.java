@@ -1,8 +1,12 @@
 package ru.nikita.adb;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.ArrayList;
 import android.os.Bundle;
 import android.net.Uri;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.app.Activity;
@@ -22,6 +26,7 @@ import ru.nikita.adb.AppListActivity;
 import ru.nikita.adb.FileManagerActivity;
 import ru.nikita.adb.AppManagerActivity;
 import ru.nikita.adb.FastbootActivity;
+import ru.nikita.adb.DeviceListAdapter;
 
 public class ADBActivity extends Activity {
 	private static final int APP_INSTALL_FILE=1;
@@ -53,11 +58,26 @@ public class ADBActivity extends Activity {
 	protected Spinner getDeviceList(){
 		return (Spinner)findViewById(R.id.device);
 	}
+	protected void setDeviceList(DeviceListAdapter adapter){
+		Spinner spinner = getDeviceList();
+		spinner.setAdapter(adapter);
+	}
+	protected void clearDeviceList(){
+		setDeviceList(null);
+	}
 	protected Device getSelectedDevice(){
 		return (Device)getDeviceList().getSelectedItem();
 	}
 	public void refreshDeviceList(View view){
-		new ADBTask(text,adb).listDevices(this,getDeviceList());
+		new DeviceListTask(text,adb).execute();
+	}
+	private void disableEnableControls(boolean enable, ViewGroup vg){
+		for (int i = 0; i < vg.getChildCount(); i++){
+			View child = vg.getChildAt(i);
+			child.setEnabled(enable);
+			if (child instanceof ViewGroup)
+				disableEnableControls(enable, (ViewGroup)child);
+		}
 	}
 	public void connectDevice(View view){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -184,6 +204,41 @@ public class ADBActivity extends Activity {
 
 		builder.show();
 	}
+
+	private class DeviceListTask extends ADBTask{
+		public DeviceListTask(TextView text, Binary binary){
+			super(text, binary);
+		}
+		@Override
+		protected void onPostExecute(String log){
+			clearDeviceList();
+			Device[] devices = getDeviceList(log);
+
+			disableEnableControls(devices.length > 0, (ViewGroup)findViewById(R.id.controls));
+
+			DeviceListAdapter adapter = new DeviceListAdapter(ADBActivity.this, devices);
+			setDeviceList(adapter);
+		}
+
+		public void execute(){
+			execute("devices");
+		}
+		private Device[] getDeviceList(String log){
+			ArrayList<Device> devices = new ArrayList<Device>();
+			String lines[] = log.split("\\n");
+			Pattern pattern = Pattern.compile("^(\\S+)\\s+(\\S+)");
+			Matcher matcher;
+			for(String line : lines){
+				if (line.matches(pattern.pattern())) {
+					matcher = pattern.matcher(line);
+					if (matcher.find())
+						devices.add(new Device(matcher.group(1),matcher.group(2)));
+				}
+			}
+			return devices.toArray(new Device[0]);
+		}
+	}
+
 	
 
 	private TextView text;

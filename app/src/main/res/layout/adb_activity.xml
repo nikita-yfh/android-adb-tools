@@ -72,56 +72,62 @@
                     android:layout_weight="1"
 					android:text="@string/reconnect" />
 			</LinearLayout>
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-				android:text="@string/device" />
 			<LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-				<Button
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:onClick="reboot"
-					android:layout_weight="1"
-					android:text="@string/reboot" />
-				<Button
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:onClick="tcpip"
-					android:layout_weight="1"
-					android:text="@string/tcpip" />
-			</LinearLayout>
-			<Button
+				android:id="@+id/controls"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:onClick="fileManager"
-				android:text="@string/file_manager" />
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-				android:text="@string/apps" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+				android:orientation="vertical">
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/device" />
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<Button
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:onClick="reboot"
+						android:layout_weight="1"
+						android:text="@string/reboot" />
+					<Button
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:onClick="tcpip"
+						android:layout_weight="1"
+						android:text="@string/tcpip" />
+				</LinearLayout>
 				<Button
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:onClick="installAppFromFile"
-                    android:layout_weight="1"
-					android:text="@string/install_app_from_file" />
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:onClick="fileManager"
+					android:text="@string/file_manager" />
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/apps" />
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<Button
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:onClick="installAppFromFile"
+						android:layout_weight="1"
+						android:text="@string/install_app_from_file" />
+					<Button
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:onClick="installAppFromList"
+						android:layout_weight="1"
+						android:text="@string/install_app_from_list" />
+				</LinearLayout>
 				<Button
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:onClick="installAppFromList"
-                    android:layout_weight="1"
-					android:text="@string/install_app_from_list" />
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:onClick="appManager"
+					android:text="@string/app_manager" />
 			</LinearLayout>
-			<Button
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:onClick="appManager"
-				android:text="@string/app_manager" />
 		</LinearLayout>
 	</ScrollView>
 	<ScrollView
