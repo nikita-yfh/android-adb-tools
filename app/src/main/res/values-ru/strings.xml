@@ -35,7 +35,7 @@
 	<string name="reboot_sideload_auto_reboot">Sideload (Автоматическая перезагрузка)</string>
 	<string name="rom_choose">Выбор образа</string>
 	<string name="boot">Загрузить образ</string>
-	<string name="flash">Пришивка</string>
+	<string name="flash">Прошивка</string>
 	<string name="erase">Очистка раздела</string>
 	<string name="partition">Раздел</string>
 	<string name="flashing">Загрузчик</string>
