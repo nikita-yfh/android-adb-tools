@@ -3,6 +3,8 @@ package ru.nikita.adb;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import android.os.Bundle;
 import android.os.AsyncTask;
 import android.app.ListActivity;
@@ -111,6 +113,11 @@ public class AppManagerActivity extends ListActivity{
 
 		int stringId;
 	}
+	private class AppComparator implements Comparator<App>{
+		public int compare(App a, App b){
+			return a.pkg.compareTo(b.pkg);
+		}
+	}
 	private class AppLoadTask extends AppTask{
 		@Override
 		protected void onPostExecute(String log){
@@ -136,6 +143,8 @@ public class AppManagerActivity extends ListActivity{
 				}
 			}
 			AppManagerActivity.this.apps = apps.toArray(new App[0]);
+
+			Arrays.sort(AppManagerActivity.this.apps, new AppComparator());
 
 			setListAdapter(new AppListAdapter(AppManagerActivity.this, AppManagerActivity.this.apps));
 		}
