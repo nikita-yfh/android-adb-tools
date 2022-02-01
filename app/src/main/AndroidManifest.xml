@@ -21,6 +21,10 @@
 			android:label="@string/app_list">
 		</activity>
 		<activity 
+			android:name=".ADBFileManagerActivity"
+			android:label="@string/file_manager">
+		</activity>
+		<activity 
 			android:name=".FileManagerActivity"
 			android:label="@string/file_manager">
 		</activity>

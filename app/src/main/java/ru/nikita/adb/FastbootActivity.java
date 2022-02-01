@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import java.io.File;
 import ru.nikita.adb.Binary;
 import ru.nikita.adb.FastbootTask;
+import ru.nikita.adb.FileManagerActivity;
 
 public class FastbootActivity extends Activity {
 	private static final int FILE_BOOT=1;
@@ -86,21 +87,13 @@ public class FastbootActivity extends Activity {
 		b.show();
 	}
 	public void flash(View view){
-		Intent chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-		chooseFileIntent.setType("application/x-ima");
-		chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
-
-		chooseFileIntent = Intent.createChooser(chooseFileIntent, getResources().getString(R.string.file_choose));
-		startActivityForResult(chooseFileIntent, FILE_FLASH);
+		Intent intent = new Intent(this, FileManagerActivity.class);
+		startActivityForResult(intent,FILE_FLASH);
 	}
 
 	public void boot(View view){
-		Intent chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-		chooseFileIntent.setType("application/x-ima");
-		chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
-
-		chooseFileIntent = Intent.createChooser(chooseFileIntent, getResources().getString(R.string.file_choose));
-		startActivityForResult(chooseFileIntent, FILE_BOOT);
+		Intent intent = new Intent(this, FileManagerActivity.class);
+		startActivityForResult(intent, FILE_BOOT);
 	}
 	public void erase(View view){
 		new FastbootTask(text,fastboot).erase(getSelectedDevice(),

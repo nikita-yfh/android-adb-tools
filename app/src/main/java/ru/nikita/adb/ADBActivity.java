@@ -23,6 +23,7 @@ import ru.nikita.adb.Binary;
 import ru.nikita.adb.Task;
 import ru.nikita.adb.Device;
 import ru.nikita.adb.AppListActivity;
+import ru.nikita.adb.ADBFileManagerActivity;
 import ru.nikita.adb.FileManagerActivity;
 import ru.nikita.adb.AppManagerActivity;
 import ru.nikita.adb.FastbootActivity;
@@ -140,19 +141,15 @@ public class ADBActivity extends Activity {
 		b.show();
 	}
 	public void installAppFromFile(View view){
-		Intent chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-		chooseFileIntent.setType("application/vnd.android.package-archive");
-		chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
-
-		chooseFileIntent = Intent.createChooser(chooseFileIntent, getResources().getString(R.string.file_choose));
-		startActivityForResult(chooseFileIntent, APP_INSTALL_FILE);
+		Intent intent = new Intent(this, FileManagerActivity.class);
+		startActivityForResult(intent, APP_INSTALL_FILE);
 	}
 	public void installAppFromList(View view){
 		Intent intent = new Intent(this, AppListActivity.class);
 		startActivityForResult(intent, APP_INSTALL_FILE);
 	}
 	public void fileManager(View view){
-		Intent intent = new Intent(this, FileManagerActivity.class);
+		Intent intent = new Intent(this, ADBFileManagerActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putSerializable("adb", adb);
 		bundle.putSerializable("device", getSelectedDevice());
