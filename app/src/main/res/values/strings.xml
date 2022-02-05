@@ -15,7 +15,7 @@
 	<string name="apps">App control</string>
 	<string name="device">Device</string>
 	<string name="ip">Device IP</string>
-	<string name="port">Input port</string>
+	<string name="port">Device port</string>
 	<string name="app_list">App list</string>
 	<string name="app_loading">Loading applications...</string>
 	<string name="show_installed_apps">Show only installed apps</string>

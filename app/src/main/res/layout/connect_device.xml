@@ -5,14 +5,24 @@
 	android:orientation="vertical"
 	android:padding="20dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
-	<Button
+	<TextView
+		android:text="@string/ip"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+	<EditText
+		android:id="@+id/input_ip"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:onClick="onADBClicked"
-		android:text="@string/adb" />
-	<Button
+		android:inputType="number|numberDecimal"
+		android:digits="0123456789."/>
+	<TextView
+		android:text="@string/port"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+	<EditText
+		android:id="@+id/input_port"
+		android:text="5555"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:onClick="onFastbootClicked"
-		android:text="@string/fastboot" />
+		android:inputType="number"/>
 </LinearLayout>

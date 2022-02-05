@@ -10,10 +10,9 @@ import android.view.MenuItem;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.widget.EditText;
+import android.text.InputType;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.text.InputType;
-import android.text.method.DigitsKeyListener;
 import ru.nikita.adb.Binary;
 import ru.nikita.adb.Device;
 import ru.nikita.adb.AppListActivity;
@@ -64,18 +63,20 @@ public class ADBActivity extends DevicesActivity {
 
 	public void connectDevice(View view){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.ip);
+		builder.setTitle(R.string.connect_device);
 
-		final EditText input = new EditText(this);
-		input.setInputType(InputType.TYPE_CLASS_TEXT);
-		input.setKeyListener(DigitsKeyListener.getInstance("0123456789."));
-		builder.setView(input);
+		View layout = getLayoutInflater().inflate(R.layout.connect_device, null);
+		builder.setView(layout);
+
+		final EditText inputIP = (EditText)layout.findViewById(R.id.input_ip);
+		final EditText inputPort = (EditText)layout.findViewById(R.id.input_port);
 
 		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				String ip=input.getText().toString();
-				new ADBTask(text,binary).connectDevice(ip);
+				String ip=inputIP.getText().toString();
+				String port=inputPort.getText().toString();
+				new ADBTask(text,binary).connectDevice(ip, port);
 				refreshDeviceList(null);
 			}
 		});

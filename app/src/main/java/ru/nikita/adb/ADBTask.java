@@ -18,8 +18,8 @@ class ADBTask extends Task{
 	public void installAppFromFile(final Device device, String fileName){
 		execute(device,"install '"+fileName+"'");
 	}
-	public void connectDevice(String ip){
-		execute("connect "+ip);
+	public void connectDevice(String ip, String port){
+		execute(String.format("connect %s:%s", ip, port));
 	}
 	public void push(Device device, String src, String dest){
 		execute(String.format("push '%s' '%s'",src,dest));
