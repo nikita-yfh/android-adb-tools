@@ -54,4 +54,6 @@
 	<string name="app_installing">Установка...</string>
 	<string name="command_line">Командная строка</string>
 	<string name="execute">Выполнить</string>
+	<string name="sort_name">Сортировка по имени</string>
+	<string name="sort_type">Сортировка по типу</string>
 </resources>
