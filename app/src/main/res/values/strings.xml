@@ -54,4 +54,6 @@
 	<string name="app_installing">Installing...</string>
 	<string name="command_line">Command line</string>
 	<string name="execute">Execute</string>
+	<string name="sort_name">Sort by name</string>
+	<string name="sort_type">Sort by type</string>
 </resources>

@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.lang.Comparable;
 import android.os.Bundle;
 import android.os.AsyncTask;
 import android.app.ListActivity;
@@ -30,6 +30,7 @@ public class AppManagerActivity extends ListActivity{
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		sortMode = SORT.TYPE;
 		adb = (Binary) getIntent().getSerializableExtra("adb");
 		device = (Device) getIntent().getSerializableExtra("device");
 		ListView v = getListView();
@@ -47,6 +48,14 @@ public class AppManagerActivity extends ListActivity{
 		if(id == R.id.refresh_apps){
 			new AppLoadTask().execute();
 			return true;
+		}else if(id == R.id.sort_name){
+			item.setChecked(true);
+			sortMode = SORT.NAME;
+			sortApps();
+		}else if(id == R.id.sort_type){
+			item.setChecked(true);
+			sortMode = SORT.TYPE;
+			sortApps();
 		}
 		return false;
 	}
@@ -76,16 +85,41 @@ public class AppManagerActivity extends ListActivity{
 
 		return super.onContextItemSelected(item);
 	}
-
-	private class App{
-		App(String pkg, String path, boolean installed){
+	private void sortApps(){
+		Arrays.sort(apps);
+		setListAdapter(new AppListAdapter(this, apps));
+	}
+	private class App implements Comparable<App>{
+		App(String pkg, String path){
 			this.pkg=pkg;
 			this.path=path;
-			this.installed=installed;
+			this.installed=false;
+			this.system=true;
+		}
+		public int getColor(){
+			if(!installed)
+				return Color.argb(70, 255, 0, 0);
+			if(!system)
+				return Color.argb(70, 0, 255, 0);
+			return Color.TRANSPARENT;
+		}
+		private boolean bigger(boolean a, boolean b){
+			return a && !b;
+		}
+		@Override
+		public int compareTo(App app){
+			if(sortMode == SORT.TYPE){
+				if(bigger(app.system, this.system) || bigger(this.installed, app.installed))
+					return -1;
+				if(bigger(this.system, app.system) || bigger(app.installed, this.installed))
+					return 1;
+			}
+			return this.pkg.compareTo(app.pkg);
 		}
 		public String pkg;
 		public String path;
 		public boolean installed;
+		public boolean system;
 	}
 	private class AppTask extends ADBTask{
 		public AppTask(){
@@ -113,11 +147,6 @@ public class AppManagerActivity extends ListActivity{
 
 		int stringId;
 	}
-	private class AppComparator implements Comparator<App>{
-		public int compare(App a, App b){
-			return a.pkg.compareTo(b.pkg);
-		}
-	}
 	private class AppLoadTask extends AppTask{
 		@Override
 		protected void onPostExecute(String log){
@@ -130,10 +159,12 @@ public class AppManagerActivity extends ListActivity{
 				if (line.matches(pattern.pattern())) {
 					Matcher matcher = pattern.matcher(line);
 					if(matcher.find()){
-						App app = new App(matcher.group(2), matcher.group(1), false);
+						App app = new App(matcher.group(2), matcher.group(1));
 						boolean find = false;
 						for(App i : apps)
 							if(app.pkg.equals(i.pkg)){
+								if(i.installed)
+									i.system = false;
 								i.installed = true;
 								find = true;
 							}
@@ -143,13 +174,10 @@ public class AppManagerActivity extends ListActivity{
 				}
 			}
 			AppManagerActivity.this.apps = apps.toArray(new App[0]);
-
-			Arrays.sort(AppManagerActivity.this.apps, new AppComparator());
-
-			setListAdapter(new AppListAdapter(AppManagerActivity.this, AppManagerActivity.this.apps));
+			sortApps();
 		}
 		public void execute(){
-			execute(R.string.app_loading, "pm list packages -u -f; pm list packages -f");
+			execute(R.string.app_loading, "pm list packages -u -f; pm list packages -f; pm list packages -3 -f");
 		}
 	}
 	private class AppListAdapter extends ArrayAdapter<App>{
@@ -172,10 +200,7 @@ public class AppManagerActivity extends ListActivity{
 			viewHolder.pkgView.setText(app.pkg);
 			viewHolder.pathView.setText(app.path);
 
-			if(!app.installed)
-				view.setBackgroundColor(Color.argb(90, 255, 0, 0));
-			else
-				view.setBackgroundColor(Color.TRANSPARENT);
+			view.setBackgroundColor(app.getColor());
 			return view;
 		}
 		private class ViewHolder{
@@ -188,5 +213,12 @@ public class AppManagerActivity extends ListActivity{
 	
 	private Device device;
 	private Binary adb;
+
+	private enum SORT{
+		TYPE,
+		NAME
+	}
+
+	private SORT sortMode;
 }
 

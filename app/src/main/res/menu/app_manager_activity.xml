@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
+		android:icon="@drawable/sort"
+		android:showAsAction="always">
+		<menu>
+			<group android:id="@+id/sort"
+				 android:checkableBehavior="single">
+				<item
+					android:id="@+id/sort_name"
+					android:title="@string/sort_name"/>
+				<item
+					android:id="@+id/sort_type"
+					android:checked="true"
+					android:title="@string/sort_type"/>
+			</group>
+		</menu>
+	</item>
+	<item
         android:id="@+id/refresh_apps"
 		android:icon="@drawable/refresh"
 		android:showAsAction="always"/>
