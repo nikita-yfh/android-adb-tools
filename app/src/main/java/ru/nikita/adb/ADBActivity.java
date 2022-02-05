@@ -4,42 +4,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
 import android.os.Bundle;
-import android.net.Uri;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.widget.TextView;
-import android.widget.Spinner;
 import android.widget.EditText;
 import android.content.DialogInterface;
-import android.content.Context;
 import android.content.Intent;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
 import ru.nikita.adb.Binary;
-import ru.nikita.adb.Task;
 import ru.nikita.adb.Device;
 import ru.nikita.adb.AppListActivity;
 import ru.nikita.adb.ADBFileManagerActivity;
 import ru.nikita.adb.FileManagerActivity;
 import ru.nikita.adb.AppManagerActivity;
 import ru.nikita.adb.FastbootActivity;
-import ru.nikita.adb.DeviceListAdapter;
+import ru.nikita.adb.DevicesActivity;
 
-public class ADBActivity extends Activity {
+public class ADBActivity extends DevicesActivity {
 	private static final int APP_INSTALL_FILE=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.adb_activity);
-		
-		text = (TextView)findViewById(R.id.log);
-
-		adb = new Binary(getApplicationContext(), "adb");
-		refreshDeviceList(null);
+		super.init(new Binary(this,"adb"));
+		super.onCreate(savedInstanceState);
     }
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
@@ -56,30 +46,22 @@ public class ADBActivity extends Activity {
 		}
 		return false;
 	}
-	protected Spinner getDeviceList(){
-		return (Spinner)findViewById(R.id.device);
-	}
-	protected void setDeviceList(DeviceListAdapter adapter){
-		Spinner spinner = getDeviceList();
-		spinner.setAdapter(adapter);
-	}
-	protected void clearDeviceList(){
-		setDeviceList(null);
-	}
-	protected Device getSelectedDevice(){
-		return (Device)getDeviceList().getSelectedItem();
-	}
-	public void refreshDeviceList(View view){
-		new DeviceListTask(text,adb).execute();
-	}
-	private void disableEnableControls(boolean enable, ViewGroup vg){
-		for (int i = 0; i < vg.getChildCount(); i++){
-			View child = vg.getChildAt(i);
-			child.setEnabled(enable);
-			if (child instanceof ViewGroup)
-				disableEnableControls(enable, (ViewGroup)child);
+	@Override
+	protected Device[] getDevices(String log){
+		ArrayList<Device> devices = new ArrayList<Device>();
+		String lines[] = log.split("\\n");
+		Pattern pattern = Pattern.compile("^(\\S+)\\s+(\\S+)");
+		Matcher matcher;
+		for(String line : lines){
+			if (line.matches(pattern.pattern())) {
+				matcher = pattern.matcher(line);
+				if (matcher.find())
+					devices.add(new Device(matcher.group(1),matcher.group(2)));
+			}
 		}
+		return devices.toArray(new Device[0]);
 	}
+
 	public void connectDevice(View view){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.ip);
@@ -93,7 +75,7 @@ public class ADBActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String ip=input.getText().toString();
-				new ADBTask(text,adb).connectDevice(ip);
+				new ADBTask(text,binary).connectDevice(ip);
 				refreshDeviceList(null);
 			}
 		});
@@ -107,17 +89,17 @@ public class ADBActivity extends Activity {
 		builder.show();
 	}
 	public void disconnectAll(View view){
-		new ADBTask(text,adb).execute("disconnect");
+		new ADBTask(text,binary).execute("disconnect");
 		refreshDeviceList(null);
 	}
 	public void startServer(View view){
-		new ADBTask(text,adb).execute("start-server");
+		new ADBTask(text,binary).execute("start-server");
 	}
 	public void killServer(View view){
-		new ADBTask(text,adb).execute("kill-server");
+		new ADBTask(text,binary).execute("kill-server");
 	}
 	public void reconnect(View view){
-		new ADBTask(text,adb).execute("reconnect");
+		new ADBTask(text,binary).execute("reconnect");
 		refreshDeviceList(null);
 	}
 
@@ -135,7 +117,7 @@ public class ADBActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which){
 				dialog.dismiss();
-				new ADBTask(text,adb).reboot(getSelectedDevice(), items[which]);
+				new ADBTask(text,binary).reboot(device, items[which]);
 			}
 		});
 		b.show();
@@ -151,16 +133,16 @@ public class ADBActivity extends Activity {
 	public void fileManager(View view){
 		Intent intent = new Intent(this, ADBFileManagerActivity.class);
 		Bundle bundle = new Bundle();
-		bundle.putSerializable("adb", adb);
-		bundle.putSerializable("device", getSelectedDevice());
+		bundle.putSerializable("adb", binary);
+		bundle.putSerializable("device", device);
 		intent.putExtras(bundle);
 		startActivity(intent);
 	}
 	public void appManager(View view){
 		Intent intent = new Intent(this, AppManagerActivity.class);
 		Bundle bundle = new Bundle();
-		bundle.putSerializable("adb", adb);
-		bundle.putSerializable("device", getSelectedDevice());
+		bundle.putSerializable("adb", binary);
+		bundle.putSerializable("device", device);
 		intent.putExtras(bundle);
 		startActivity(intent);
 	}
@@ -170,7 +152,7 @@ public class ADBActivity extends Activity {
 		if(resultCode == Activity.RESULT_OK && data != null){
 			if(requestCode == APP_INSTALL_FILE){
 				String filePath = data.getData().getPath();
-				new ADBTask(text,adb).installAppFromFile(getSelectedDevice(),filePath);
+				new ADBTask(text,binary).installAppFromFile(device,filePath);
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -189,7 +171,7 @@ public class ADBActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				String port=input.getText().toString();
 				if(port.trim().length()==0)port="5555";
-				new ADBTask(text,adb).tcpip(getSelectedDevice(),port);
+				new ADBTask(text,binary).tcpip(device,port);
 			}
 		});
 		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -203,45 +185,6 @@ public class ADBActivity extends Activity {
 	}
 	public void executeCommand(View view){
 		EditText command = (EditText)findViewById(R.id.command);
-		new ADBTask(text,adb).execute(getSelectedDevice(), command.getText().toString());
+		new ADBTask(text,binary).execute(device, command.getText().toString());
 	}
-	private class DeviceListTask extends ADBTask{
-		public DeviceListTask(TextView text, Binary binary){
-			super(text, binary);
-		}
-		@Override
-		protected void onPostExecute(String log){
-			clearDeviceList();
-			Device[] devices = getDeviceList(log);
-
-			disableEnableControls(devices.length > 0, (ViewGroup)findViewById(R.id.controls));
-
-			DeviceListAdapter adapter = new DeviceListAdapter(ADBActivity.this, devices);
-			setDeviceList(adapter);
-		}
-
-		public void execute(){
-			execute("devices");
-		}
-		private Device[] getDeviceList(String log){
-			ArrayList<Device> devices = new ArrayList<Device>();
-			String lines[] = log.split("\\n");
-			Pattern pattern = Pattern.compile("^(\\S+)\\s+(\\S+)");
-			Matcher matcher;
-			for(String line : lines){
-				if (line.matches(pattern.pattern())) {
-					matcher = pattern.matcher(line);
-					if (matcher.find())
-						devices.add(new Device(matcher.group(1),matcher.group(2)));
-				}
-			}
-			return devices.toArray(new Device[0]);
-		}
-	}
-
-	
-
-	private TextView text;
-	private Binary adb;
-
 }

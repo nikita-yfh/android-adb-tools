@@ -1,73 +1,53 @@
 package ru.nikita.adb;
 
+import java.io.File;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.widget.TextView;
-import android.widget.Spinner;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.content.Intent;
 import android.content.DialogInterface;
-import java.io.File;
 import ru.nikita.adb.Binary;
 import ru.nikita.adb.FastbootTask;
 import ru.nikita.adb.FileManagerActivity;
+import ru.nikita.adb.DevicesActivity;
 
-public class FastbootActivity extends Activity {
+public class FastbootActivity extends DevicesActivity {
 	private static final int FILE_BOOT=1;
 	private static final int FILE_FLASH=2;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fastboot_activity);
-
-		text = (TextView)findViewById(R.id.log);
-
-		fastboot = new Binary(getApplicationContext(), "fastboot");
-		refreshDeviceList(null);
+		super.init(new Binary(this, "fastboot"));
+		super.onCreate(savedInstanceState);
 	}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode == Activity.RESULT_OK && data != null){
 			String filePath = data.getData().getPath();
 			if(requestCode == FILE_BOOT){
-				new FastbootTask(text,fastboot).boot(getSelectedDevice(),filePath);
+				new FastbootTask(text,binary).boot(device,filePath);
 			}else if(requestCode == FILE_FLASH){
-				new FastbootTask(text,fastboot).flash(getSelectedDevice(),
+				new FastbootTask(text,binary).flash(device,
 						getSelectedPartition(), filePath);
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
+	@Override
+	protected Device[] getDevices(String log){
+		String words[] = log.split(" |\\n");
+		Device[] devices = new Device[words.length/2];
+
+		for(int i = 0; i < devices.length; i++)
+			devices[i] = new Device(words[i*2], words[i*2+1]);
+		return devices;
+	}
 	protected String getSelectedPartition(){
 		Spinner spinner = (Spinner)findViewById(R.id.partition);
 		return spinner.getSelectedItem().toString();
-	}
-	protected Spinner getDeviceList(){
-		return (Spinner)findViewById(R.id.device);
-	}
-	protected void setDeviceList(DeviceListAdapter adapter){
-		Spinner spinner = getDeviceList();
-		spinner.setAdapter(adapter);
-	}
-	protected void clearDeviceList(){
-		setDeviceList(null);
-	}
-	protected Device getSelectedDevice(){
-		return (Device)getDeviceList().getSelectedItem();
-	}
-	public void refreshDeviceList(View view){
-		new DeviceListTask(text,fastboot).execute();
-	}
-	private void disableEnableControls(boolean enable, ViewGroup vg){
-		for (int i = 0; i < vg.getChildCount(); i++){
-			View child = vg.getChildAt(i);
-			child.setEnabled(enable);
-			if (child instanceof ViewGroup)
-				disableEnableControls(enable, (ViewGroup)child);
-		}
 	}
 	public void reboot(View view){
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
@@ -81,7 +61,7 @@ public class FastbootActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which){
 				dialog.dismiss();
-				new FastbootTask(text,fastboot).reboot(getSelectedDevice(), items[which]);
+				new FastbootTask(text,binary).reboot(device, items[which]);
 			}
 		});
 		b.show();
@@ -96,15 +76,15 @@ public class FastbootActivity extends Activity {
 		startActivityForResult(intent, FILE_BOOT);
 	}
 	public void erase(View view){
-		new FastbootTask(text,fastboot).erase(getSelectedDevice(),
+		new FastbootTask(text,binary).erase(device,
 				getSelectedPartition());
 	}
 
 	public void flashingUnlock(View view){
-		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "flashing unlock");
+		new FastbootTask(text,binary).execute(device, "flashing unlock");
 	}
 	public void flashingLock(View view){
-		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "flashing lock");
+		new FastbootTask(text,binary).execute(device, "flashing lock");
 	}
 	public void oemUnlock(View view){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -117,7 +97,7 @@ public class FastbootActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String code=input.getText().toString();
-				new FastbootTask(text,fastboot).oemUnlock(getSelectedDevice(), code);
+				new FastbootTask(text,binary).oemUnlock(device, code);
 			}
 		});
 		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -130,48 +110,16 @@ public class FastbootActivity extends Activity {
 		builder.show();
 	}
 	public void oemLock(View view){
-		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "oem lock");
+		new FastbootTask(text,binary).execute(device, "oem lock");
 	}
 	public void oemDeviceInfo(View view){
-		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "oem device-info");
+		new FastbootTask(text,binary).execute(device, "oem device-info");
 	}
 	public void deviceInfoAll(View view){
-		new FastbootTask(text,fastboot).execute(getSelectedDevice(), "getvar all");
+		new FastbootTask(text,binary).execute(device, "getvar all");
 	}
 	public void executeCommand(View view){
 		EditText command = (EditText)findViewById(R.id.command);
-		new FastbootTask(text,fastboot).execute(getSelectedDevice(), command.getText().toString());
+		new FastbootTask(text,binary).execute(device, command.getText().toString());
 	}
-
-	private class DeviceListTask extends FastbootTask{
-		public DeviceListTask(TextView text, Binary binary){
-			super(text, binary);
-		}
-
-		@Override
-		protected void onPostExecute(String log){
-			clearDeviceList();
-			Device[] devices = getDeviceList(log);
-
-			disableEnableControls(devices.length > 0, (ViewGroup)findViewById(R.id.controls));
-
-			DeviceListAdapter adapter = new DeviceListAdapter(FastbootActivity.this, devices);
-			setDeviceList(adapter);
-		}
-
-		public void execute(){
-			execute("devices");
-		}
-		private Device[] getDeviceList(String log){
-			String words[] = log.split(" |\\n");
-			Device[] devices = new Device[words.length/2];
-
-			for(int i = 0; i < devices.length; i++)
-				devices[i] = new Device(words[i*2], words[i*2+1]);
-			return devices;
-		}
-	}
-
-	private TextView text;
-	private Binary fastboot;
 }

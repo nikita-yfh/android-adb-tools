@@ -4,7 +4,6 @@ import java.lang.String;
 import ru.nikita.adb.ADBTask;
 import ru.nikita.adb.Binary;
 import ru.nikita.adb.Device;
-import android.util.Log;
 
 public class ADBFile {
 	private ADBFile(Binary adb, Device device, String path, boolean isDirectory){
@@ -50,9 +49,6 @@ public class ADBFile {
 			char flag = fileList[i].charAt(0);
 			boolean isDir = (flag == 'd' || flag == 'l');
 			String[] words = fileList[i].split("\\s+", 8);
-			Log.v("adb", "string: " + fileList[i]);
-			for(String log : words)
-				Log.v("adb", log);
 			files[i] = new ADBFile(m_adb, m_device, words[7], isDir);
 		}
 		return files;
@@ -66,6 +62,5 @@ public class ADBFile {
 	private String m_path;
 	private Device m_device;
 	private boolean m_isDirectory;
-
 }
 
