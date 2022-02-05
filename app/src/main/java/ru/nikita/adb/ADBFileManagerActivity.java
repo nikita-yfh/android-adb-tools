@@ -96,7 +96,7 @@ public class ADBFileManagerActivity extends ListActivity{
 			updateFileList(currentFile, false);
 			return true;
 		}else if(id == R.id.file_push){
-			Intent intent = new Intent(this, AppListActivity.class);
+			Intent intent = new Intent(this, FileManagerActivity.class);
 			startActivityForResult(intent, FILE_PUSH);
 			return true;
 		}
