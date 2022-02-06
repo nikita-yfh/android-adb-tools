@@ -18,6 +18,7 @@
 	<string name="port">Device port</string>
 	<string name="app_list">App list</string>
 	<string name="app_loading">Loading applications...</string>
+	<string name="permissions_loading">Loading permissions...</string>
 	<string name="show_installed_apps">Show only installed apps</string>
 	<string name="refresh_apps">Refresh</string>
 	<string name="file_manager">File manager</string>
@@ -50,8 +51,12 @@
 	<string name="app_uninstall_data">Uninstall with data</string>
 	<string name="app_uninstall">Uninstall without data</string>
 	<string name="app_install">Install</string>
+	<string name="app_clear">Clear data</string>
+	<string name="app_permissions">Set permissions</string>
 	<string name="app_uninstalling">Uninstalling...</string>
 	<string name="app_installing">Installing...</string>
+	<string name="app_clearing">Clearing data...</string>
+	<string name="app_permissions_applying">Applying permissions...</string>
 	<string name="command_line">Command line</string>
 	<string name="execute">Execute</string>
 	<string name="sort_name">Sort by name</string>

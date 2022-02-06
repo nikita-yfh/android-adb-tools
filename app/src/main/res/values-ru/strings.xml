@@ -18,6 +18,7 @@
 	<string name="port">Порт</string>
 	<string name="app_list">Список приложений</string>
 	<string name="app_loading">Загрузка списка приложений...</string>
+	<string name="permissions_loading">Загрузка разрешений...</string>
 	<string name="show_installed_apps">Только сторонние</string>
 	<string name="refresh_apps">Обновить список</string>
 	<string name="file_manager">Менеджер файлов</string>
@@ -50,8 +51,12 @@
 	<string name="app_uninstall_data">Удалить с данными</string>
 	<string name="app_uninstall">Удалить</string>
 	<string name="app_install">Переустановить</string>
+	<string name="app_clear">Очистить данные</string>
+	<string name="app_permissions">Установить разрешения</string>
 	<string name="app_uninstalling">Удаление...</string>
 	<string name="app_installing">Установка...</string>
+	<string name="app_clearing">Очистка данных...</string>
+	<string name="app_permissions_applying">Применение разрешений...</string>
 	<string name="command_line">Командная строка</string>
 	<string name="execute">Выполнить</string>
 	<string name="sort_name">Сортировка по имени</string>

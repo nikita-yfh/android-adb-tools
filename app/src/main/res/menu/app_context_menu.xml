@@ -6,4 +6,8 @@
 	android:title="@string/app_uninstall" />
 <item android:id="@+id/app_install"
 	android:title="@string/app_install" />
+<item android:id="@+id/app_clear"
+	android:title="@string/app_clear" />
+<item android:id="@+id/app_permissions"
+	android:title="@string/app_permissions" />
 </menu>

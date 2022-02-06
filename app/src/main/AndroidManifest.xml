@@ -32,6 +32,9 @@
 			android:name=".AppManagerActivity"
 			android:label="@string/app_manager">
 		</activity>
+		<activity 
+			android:name=".PermissionsActivity"
+			android:label="@string/app_permissions">
+		</activity>
     </application>
-
 </manifest>

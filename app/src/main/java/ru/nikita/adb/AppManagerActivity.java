@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ListView;
@@ -25,14 +26,16 @@ import android.graphics.Color;
 import android.util.Log;
 import ru.nikita.adb.Device;
 import ru.nikita.adb.Task;
+import ru.nikita.adb.PermissionsActivity;
 
 public class AppManagerActivity extends ListActivity{
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		sortMode = SORT.TYPE;
-		adb = (Binary) getIntent().getSerializableExtra("adb");
-		device = (Device) getIntent().getSerializableExtra("device");
+		Intent intent = getIntent();
+		adb = (Binary) intent.getSerializableExtra("adb");
+		device = (Device) intent.getSerializableExtra("device");
 		ListView v = getListView();
 		registerForContextMenu(v);
 		new AppLoadTask().execute();
@@ -73,16 +76,27 @@ public class AppManagerActivity extends ListActivity{
 		int id = item.getItemId();
 		App app = apps[info.position];
 		if(id == R.id.app_uninstall_data){
-			new AppTask().execute(R.string.app_uninstalling, "pm uninstall --user 0 " + app.pkg);
+			new AppTask().uninstallWithData(app);
 			return true;
 		}else if(id == R.id.app_uninstall){
-			new AppTask().execute(R.string.app_uninstalling, "pm uninstall -k --user 0 " + app.pkg);
+			new AppTask().uninstall(app);
 			return true;
 		}else if(id == R.id.app_install){
-			new AppTask().execute(R.string.app_installing, "cmd package install-existing " + app.pkg);
+			new AppTask().install(app);
+			return true;
+		}else if(id == R.id.app_clear){
+			new AppTask().clear(app);
+			return true;
+		}else if(id == R.id.app_permissions){
+			Intent intent = new Intent(this, PermissionsActivity.class);
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("adb", adb);
+			bundle.putSerializable("device", device);
+			bundle.putString("package", app.pkg);
+			intent.putExtras(bundle);
+			startActivity(intent);
 			return true;
 		}
-
 		return super.onContextItemSelected(item);
 	}
 	private void sortApps(){
@@ -124,6 +138,7 @@ public class AppManagerActivity extends ListActivity{
 	private class AppTask extends ADBTask{
 		public AppTask(){
 			super(adb);
+			update = false;
 		}
 		@Override
 		protected void onPreExecute(){
@@ -139,13 +154,31 @@ public class AppManagerActivity extends ListActivity{
 			log = log.trim();
 			if(log.length() > 0 && log.length() < 200)
 				Toast.makeText(getApplicationContext(), log, Toast.LENGTH_SHORT).show();
+			if(update)
+				new AppLoadTask().execute();
 		}
 		public void execute(int stringId, String args){
 			this.stringId=stringId;
 			shell(device, args);
 		}
+		public void uninstallWithData(App app){
+			update = true;
+			execute(R.string.app_uninstalling, "pm uninstall --user 0 " + app.pkg);
+		}
+		public void uninstall(App app){
+			update = true;
+			execute(R.string.app_uninstalling, "pm uninstall -k --user 0 " + app.pkg);
+		}
+		public void install(App app){
+			update = true;
+			execute(R.string.app_installing, "cmd package install-existing " + app.pkg);
+		}
+		public void clear(App app){
+			execute(R.string.app_clearing, "pm clear " + app.pkg);
+		}
 
 		int stringId;
+		boolean update;
 	}
 	private class AppLoadTask extends AppTask{
 		@Override
