@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.text.InputType;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import ru.nikita.adb.DevicesActivity;
 
 public class ADBActivity extends DevicesActivity {
 	private static final int APP_INSTALL_FILE=1;
+	private static final int RESTORE=2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.adb_activity);
@@ -151,10 +153,13 @@ public class ADBActivity extends DevicesActivity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode == Activity.RESULT_OK && data != null){
-			if(requestCode == APP_INSTALL_FILE){
-				String filePath = data.getData().getPath();
+			String filePath = data.getData().getPath();
+			if(requestCode == APP_INSTALL_FILE)
 				new ADBTask(text,binary).installAppFromFile(device,filePath);
-			}
+			else if(requestCode == RESTORE)
+				new ADBTask(text,binary).restore(device,filePath);
+
+
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -184,8 +189,46 @@ public class ADBActivity extends DevicesActivity {
 
 		builder.show();
 	}
+	public void backup(View view){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.backup);
+
+		View layout = getLayoutInflater().inflate(R.layout.backup, null);
+		builder.setView(layout);
+
+		final Switch backupAPK = (Switch)layout.findViewById(R.id.backup_apk);
+		final Switch backupUserApps = (Switch)layout.findViewById(R.id.backup_user_apps);
+		final Switch backupSystemApps = (Switch)layout.findViewById(R.id.backup_system_apps);
+		final Switch backupData = (Switch)layout.findViewById(R.id.backup_data);
+		final Switch backupCache = (Switch)layout.findViewById(R.id.backup_cache);
+
+		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				new ADBTask(text,binary).backup(device,
+					backupAPK.isChecked(),
+					backupUserApps.isChecked(),
+					backupSystemApps.isChecked(),
+					backupData.isChecked(),
+					backupCache.isChecked());
+			}
+		});
+		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+
+		builder.show();
+	}
+	public void restore(View view){
+		Intent intent = new Intent(this, FileManagerActivity.class);
+		startActivityForResult(intent, RESTORE);
+	}
+
 	public void executeCommand(View view){
 		EditText command = (EditText)findViewById(R.id.command);
-		new ADBTask(text,binary).execute(device, command.getText().toString());
+		new ADBTask(text,binary).shell(device, command.getText().toString());
 	}
 }

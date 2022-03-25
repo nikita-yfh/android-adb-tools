@@ -28,6 +28,13 @@
 	<string name="file_pull">Копировать в /sdcard/ADB/</string>
 	<string name="file_choose">Выбор файла</string>
 	<string name="file_delete_confirm">Удалить?</string>
+	<string name="backup">Резервирование</string>
+	<string name="backup_apk">Резервировать .apk</string>
+	<string name="backup_user_apps">Пользовательские приложения</string>
+	<string name="backup_system_apps">Системные приложения</string>
+	<string name="backup_data">Данные приложений</string>
+	<string name="backup_cache">Кэш приложений</string>
+	<string name="restore">Восстановление</string>
 	<string name="reboot">Перезагрузить</string>
 	<string name="reboot_system">Система</string>
 	<string name="reboot_recovery">Режим восстановления</string>

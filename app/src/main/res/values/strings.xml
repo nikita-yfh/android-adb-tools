@@ -28,6 +28,13 @@
 	<string name="file_pull">Copy to /sdcard/ADB/</string>
 	<string name="file_choose">Choose file</string>
 	<string name="file_delete_confirm">Delete?</string>
+	<string name="backup">Backup</string>
+	<string name="backup_apk">Backup .apk</string>
+	<string name="backup_user_apps">Backup user apps</string>
+	<string name="backup_system_apps">Backup system apps</string>
+	<string name="backup_data">Backup app data</string>
+	<string name="backup_cache">Backup app cache</string>
+	<string name="restore">Restore</string>
 	<string name="reboot">Reboot</string>
 	<string name="reboot_system">System</string>
 	<string name="reboot_recovery">Recovery</string>

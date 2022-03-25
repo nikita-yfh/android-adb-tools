@@ -127,6 +127,22 @@
 					android:layout_height="wrap_content"
 					android:onClick="appManager"
 					android:text="@string/app_manager" />
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<Button
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:onClick="backup"
+						android:layout_weight="1"
+						android:text="@string/backup" />
+					<Button
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:onClick="restore"
+						android:layout_weight="1"
+						android:text="@string/restore" />
+				</LinearLayout>
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"

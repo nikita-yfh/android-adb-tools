@@ -7,8 +7,8 @@ android {
         applicationId "ru.nikita.adb"
         minSdkVersion 12
         targetSdkVersion 20
-        versionCode 3
-        versionName "1.3"
+        versionCode 4
+        versionName "1.4"
     }
     buildTypes {
         release {

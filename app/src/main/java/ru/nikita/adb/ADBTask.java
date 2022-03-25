@@ -2,7 +2,10 @@ package ru.nikita.adb;
 
 import ru.nikita.adb.Task;
 import ru.nikita.adb.Device;
+import java.io.File;
 import java.lang.String;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import android.widget.TextView;
 
 class ADBTask extends Task{
@@ -17,6 +20,27 @@ class ADBTask extends Task{
 	}
 	public void installAppFromFile(final Device device, String fileName){
 		execute(device,"install '"+fileName+"'");
+	}
+	public void backup(final Device device, boolean apk, boolean userApps,
+			boolean systemApps, boolean data, boolean cache) {
+		new File("/sdcard/ADB").mkdir();
+		String args = new String();
+		if(apk)
+			args += "-apk ";
+		if(data)
+			args += "-shsred ";
+		if(cache)
+			args += "-obb ";
+		if(userApps)
+			args += "-all ";
+		if(!systemApps)
+			args += "-nosystem ";
+		String fileName = "/sdcard/ADB/backup_"+new SimpleDateFormat("ddMMyy_hhmmss").format(Calendar.getInstance().getTime())+".ab";
+
+		execute(device,"backup -f '"+fileName+"' "+args);
+	}
+	public void restore(final Device device, String fileName){
+		execute(device,"restore '"+fileName+"'");
 	}
 	public void connectDevice(String ip, String port){
 		execute(String.format("connect %s:%s", ip, port));
