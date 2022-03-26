@@ -6,6 +6,7 @@ Full support of OTG connection and wireless debugging. Need root permission to w
 
 * File manager
 * App manager
+* Backup/restore
 * Fast app installing
 * Multiple device support
 * Command line
