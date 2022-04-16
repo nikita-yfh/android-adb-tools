@@ -28,7 +28,7 @@ class ADBTask extends Task{
 		if(apk)
 			args += "-apk ";
 		if(data)
-			args += "-shsred ";
+			args += "-shared ";
 		if(cache)
 			args += "-obb ";
 		if(userApps)
