@@ -1,7 +1,5 @@
 package ru.nikita.adb;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import android.os.Bundle;
@@ -11,7 +9,9 @@ import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.DialogInterface;
 import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbDevice;
 import ru.nikita.adb.FastbootVariablesListActivity;
@@ -78,8 +78,23 @@ public class FastbootActivity extends Activity{
 	}
 	public void reboot(View view){
 		try {
-			if(getSelectedDevice().openConnection(this))
-				getSelectedDevice().reboot();
+			if(getSelectedDevice().openConnection(this)) {
+				AlertDialog.Builder b = new AlertDialog.Builder(this);
+				b.setTitle(R.string.reboot);
+				final String[] items = {
+					"",
+					"bootloader",
+					"recovery",
+				};
+				b.setItems(R.array.fastboot_reboot, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which){
+						dialog.dismiss();
+						getSelectedDevice().reboot(items[which]);
+					}
+				});
+				b.show();
+			}
 		} catch(FastbootException e) {
 			e.showToast(this);
 		}

@@ -86,8 +86,8 @@ class FastbootDevice {
 		return response;
 	}
 
-	public void reboot() {
-		write("reboot");
+	public void reboot(String target) {
+		write("reboot-" + target);
 		readOnce();
 	}
 
