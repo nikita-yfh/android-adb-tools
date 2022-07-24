@@ -12,8 +12,12 @@
 			android:label="@string/fastboot">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
+				<action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		<activity 
+			android:name=".FastbootVariablesListActivity"
+			android:label="@string/fastboot_variables" />
 	</application>
 </manifest>

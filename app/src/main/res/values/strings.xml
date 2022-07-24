@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">ADB &amp; Fastboot tools</string>
+	<string name="app_name">ADB &amp; Fastboot tools</string>
 	<string name="adb">ADB</string>
 	<string name="fastboot">Fastboot</string>
+	<string name="fastboot_variables">Fastboot variables</string>
+	<string name="clipboard_copied">Copied to clipboard</string>
 	<string name="refresh_devices">Refresh</string>
 	<string name="connect_device">Connect device</string>
 	<string name="disconnect_all">Disconnect all</string>
@@ -35,6 +37,7 @@
 	<string name="backup_data">Backup app data</string>
 	<string name="backup_cache">Backup app cache</string>
 	<string name="restore">Restore</string>
+	<string name="poweroff">Poweroff</string>
 	<string name="reboot">Reboot</string>
 	<string name="reboot_system">System</string>
 	<string name="reboot_recovery">Recovery</string>

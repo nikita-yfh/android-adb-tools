@@ -2,6 +2,8 @@
     <string name="app_name">ADB &amp; Fastboot tools</string>
 	<string name="adb">ADB</string>
 	<string name="fastboot">Fastboot</string>
+	<string name="fastboot_variables">Переменные fastboot</string>
+	<string name="clipboard_copied">Скопировано в буфер обмена</string>
 	<string name="refresh_devices">Обновить</string>
 	<string name="connect_device">Подключить устройство</string>
 	<string name="disconnect_all">Отключить все</string>
@@ -35,6 +37,7 @@
 	<string name="backup_data">Данные приложений</string>
 	<string name="backup_cache">Кэш приложений</string>
 	<string name="restore">Восстановление</string>
+	<string name="poweroff">Выключить</string>
 	<string name="reboot">Перезагрузить</string>
 	<string name="reboot_system">Система</string>
 	<string name="reboot_recovery">Режим восстановления</string>
