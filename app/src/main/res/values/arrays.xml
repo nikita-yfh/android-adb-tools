@@ -18,6 +18,18 @@
 		<item>boot</item>
 		<item>cache</item>
 		<item>radio</item>
+		<item>vbmeta</item>
+		<item>dts</item>
+		<item>dtbo</item>
+	</string-array>
+	<string-array name="fs">
+		<item>---</item>
+		<item>ext4</item>
+		<item>ext3</item>
+		<item>ext2</item>
+		<item>fat</item>
+		<item>exfat</item>
+		<item>f2fs</item>
 	</string-array>
 </resources>
 

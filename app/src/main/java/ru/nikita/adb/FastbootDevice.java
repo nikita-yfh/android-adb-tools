@@ -3,6 +3,7 @@ package ru.nikita.adb;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -48,33 +49,30 @@ class FastbootDevice {
 		return String.format("%04X:%04X", device.getVendorId(), device.getProductId());
 	}
 
-	private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			if (ACTION_USB_PERMISSION.equals(action)) {
-				synchronized (this) {
-					UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-					if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false))
-						if(device != null)
-							connection = manager.openDevice(device);
-				}
-			}
-		}
-	};
-
 	public boolean openConnection(Context context) {
+		if(connection == null)
+			connection = manager.openDevice(device);
 		if(connection != null)
 			return true;
 		PendingIntent intent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
 		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-		context.registerReceiver(usbReceiver, filter);
 		manager.requestPermission(device, intent);
 		return false;
 	}
 
-	private void write(String command) {
+	private void rawCommand(String command) {
+		Log.d("ADB", command);
 		byte[] bytes = command.getBytes();
 		connection.bulkTransfer(out, bytes, bytes.length, 0);
+	}
+
+	private void writeData(byte[] data) {
+		int offset = 0;
+		while (offset < data.length) {
+			int size = Math.min(data.length - offset, out.getMaxPacketSize());
+			int bytesWritten = connection.bulkTransfer(out, Arrays.copyOfRange(data, offset, offset + size), size, 0);
+			offset += bytesWritten;
+		}
 	}
 
 	private String readOnce() {
@@ -83,16 +81,62 @@ class FastbootDevice {
 		String response = new String(bytes, 0, length);
 		if(response.startsWith("FAIL"))
 			throw new FastbootException(response);
+		Log.d("ADB", response);
 		return response;
 	}
 
-	public void reboot(String target) {
-		write("reboot-" + target);
+	private String readOkay() {
+		byte[] bytes = new byte[1024];
+		int length = connection.bulkTransfer(in, bytes, bytes.length, 0);
+		String response = new String(bytes, 0, length);
+		if(!response.startsWith("OKAY"))
+			throw new FastbootException(response);
+		Log.d("ADB", response);
+		return response.substring(4);
+	}
+
+	public void erase(String partition) {
+		rawCommand("erase:" + partition);
 		readOnce();
 	}
 
+	public void reboot(String target) {
+		rawCommand("reboot-" + target);
+		readOnce();
+	}
+
+	public void flashingUnlock() {
+		rawCommand("flashing unlock");
+		while(readOnce().startsWith("INFO"));
+	}
+
+	public void flashingLock() {
+		rawCommand("flashing lock");
+		while(readOnce().startsWith("INFO"));
+	}
+
+	public String getVariable(String name) {
+		rawCommand("getvar:" + name);
+		return readOkay();
+	}
+
+	public long getSparseLimit() {
+		String str = getVariable("max-download-size");
+		return Long.decode(str);
+	}
+
+	public boolean hasVbmetaPartiton() {
+		return !getVariable("partition-type:vbmeta").isEmpty() ||
+			   !getVariable("partition-type:vbmeta_a").isEmpty() ||
+			   !getVariable("partition-type:vbmeta_b").isEmpty();
+	}
+
+	public boolean isLogical(String partition) {
+		return getVariable("is-logical:" + partition).equals("yes");
+	}
+
 	public FastbootVariable[] getAllVariables() {
-		write("getvar:all");
+		rawCommand("getvar:all");
 		ArrayList<FastbootVariable> list = new ArrayList<FastbootVariable>();
 		String response;
 		do {
@@ -101,6 +145,24 @@ class FastbootDevice {
 				list.add(new FastbootVariable(response));
 		} while(response.startsWith("INFO"));
 		return list.toArray(new FastbootVariable[0]);
+	}
+
+	public void download(byte[] data) {
+		rawCommand(String.format("download:%08x", data.length));
+		String response = readOnce();
+		if(!response.startsWith("DATA") || Integer.parseInt(response.substring(4), 16) != data.length)
+			throw new FastbootException("Invalid response");
+		Log.v("ADB", "Downloading...");
+		writeData(data);
+		Log.v("ADB", "Downloading OK");
+		readOkay();
+	}
+
+	public void flash(String partition) {
+		Log.v("ADB", "Flashing...");
+		rawCommand("flash:" + partition);
+		readOnce();
+		Log.v("ADB", "Flashing OK");
 	}
 
 	private UsbManager manager;

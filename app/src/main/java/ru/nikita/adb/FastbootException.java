@@ -1,7 +1,5 @@
 package ru.nikita.adb;
 
-import android.content.Context;
-import android.widget.Toast;
 import java.lang.Exception;
 import java.lang.String;
 
@@ -15,7 +13,4 @@ public class FastbootException extends RuntimeException {
 		return error;
 	}
 
-	public void showToast(Context context) {
-		Toast.makeText(context, getMessage(), Toast.LENGTH_SHORT).show();
-	}
 }

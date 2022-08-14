@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ru.nikita.adb">
 	<uses-permission android:name="android.permission.USB_PERMISSION" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-feature android:name="android.hardware.usb.host" />
 	<application
 		android:icon="@drawable/app_icon"
@@ -9,7 +11,8 @@
 		android:theme="@style/AppTheme">
 		<activity 
 			android:name=".FastbootActivity"
-			android:label="@string/fastboot">
+			android:label="@string/fastboot"
+			android:configChanges="keyboardHidden|orientation|screenSize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
@@ -18,6 +21,12 @@
 		</activity>
 		<activity 
 			android:name=".FastbootVariablesListActivity"
+			android:label="@string/fastboot_variables" />
+		<activity 
+			android:name=".PartitionListActivity"
+			android:label="@string/fastboot_partitions" />
+		<activity 
+			android:name=".FileManagerActivity"
 			android:label="@string/fastboot_variables" />
 	</application>
 </manifest>

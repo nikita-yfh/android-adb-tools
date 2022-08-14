@@ -3,104 +3,118 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android">
-
 	<ScrollView
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		tools:ignore="UselessParent">
-
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:padding="10dp"
 			android:orientation="vertical">
-
 			<TextView
 				android:id="@+id/textView"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/device" />
-
-			<LinearLayout
+			<Spinner
+				android:id="@+id/device"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content">
-
-				<Spinner
-					android:id="@+id/device"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="3"
-					android:spinnerMode="dialog" />
-
-				<Button
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:onClick="updateDeviceList"
-					android:text="@string/refresh_devices" />
-			</LinearLayout>
-
+				android:layout_height="wrap_content"
+				android:spinnerMode="dialog" />
 			<LinearLayout
 				android:id="@+id/controls"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="vertical">
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:layout_weight="1"
-					android:text="@string/device" />
 				<Button
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:onClick="deviceInfoAll"
-					android:text="@string/device_info_all" />
+					android:onClick="reboot"
+					android:text="@string/reboot" />
+				<Button
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:onClick="listVariables"
+					android:text="@string/fastboot_variables" />
+				<Button
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:onClick="listPartitions"
+					android:text="@string/fastboot_partitions" />
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:text="@string/partition" />
+				<Spinner
+					android:id="@+id/partition"
+					android:layout_width="fill_parent"
+					android:layout_height="match_parent"
+					android:layout_weight="1"
+					android:entries="@array/partitions" />
 				<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
-					<Button
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:onClick="reboot"
-						android:layout_weight="1"
-						android:text="@string/reboot" />
-					<Button
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:onClick="boot"
-						android:layout_weight="1"
-						android:text="@string/boot" />
-				</LinearLayout>
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-					<TextView
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:layout_weight="1"
-						android:text="@string/partition" />
 					<Spinner
-						android:id="@+id/partition"
+						android:id="@+id/fs"
+						android:layout_width="fill_parent"
+						android:layout_height="match_parent"
+						android:layout_weight="1"
+						android:entries="@array/fs" />
+					<Button
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:onClick="formatPartition"
+						android:text="@string/format" />
+				</LinearLayout>
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:text="@string/flasher" />
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<EditText
+						android:id="@+id/image_path"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
-						android:entries="@array/partitions" />
+						android:layout_weight="1"
+						android:inputType="textUri" />
+					<Button
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:onClick="browseImage"
+						android:text="@string/browse_file" />
 				</LinearLayout>
 				<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
-					<Button
+					<CheckBox
+						android:id="@+id/raw"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
-						android:onClick="flash"
 						android:layout_weight="1"
-						android:text="@string/flash" />
-					<Button
+						android:text="@string/raw" />
+					<CheckBox
+						android:id="@+id/disable_verity"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
-						android:onClick="erase"
 						android:layout_weight="1"
-						android:text="@string/erase" />
+						android:text="@string/disable_verity" />
+					<CheckBox
+						android:id="@+id/disable_verification"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:layout_weight="1"
+						android:text="@string/disable_verification" />
 				</LinearLayout>
+				<Button
+					android:id="@+id/flash"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:onClick="flash"
+					android:text="@string/flash" />
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
@@ -121,32 +135,6 @@
 						android:onClick="flashingLock"
 						android:layout_weight="1"
 						android:text="@string/flashing_lock" />
-				</LinearLayout>
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:layout_weight="1"
-					android:text="@string/oem" />
-				<Button
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:onClick="oemDeviceInfo"
-					android:text="@string/oem_device_info" />
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-					<Button
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:onClick="oemUnlock"
-						android:layout_weight="1"
-						android:text="@string/oem_unlock" />
-					<Button
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:onClick="oemLock"
-						android:layout_weight="1"
-						android:text="@string/oem_lock" />
 				</LinearLayout>
 			</LinearLayout>
 		</LinearLayout>
