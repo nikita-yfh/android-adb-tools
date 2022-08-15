@@ -51,6 +51,8 @@
 	<string name="boot">Boot ROM</string>
 	<string name="flasher">Flasher</string>
 	<string name="flash">Flash</string>
+	<string name="sending">Sending</string>
+	<string name="writing">Writing</string>
 	<string name="format">Format</string>
 	<string name="partition">Partition</string>
 	<string name="flashing">Bootloader unlocker</string>

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import android.os.Bundle;
+import android.os.AsyncTask;
 import android.content.Context;
 import android.text.TextWatcher;
 import android.text.Editable;
@@ -19,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.DialogInterface;
 import android.content.BroadcastReceiver;
@@ -216,16 +218,56 @@ public class FastbootActivity extends Activity {
 		}
 	}
 
-	public void flash(View view) {
-		try {
-			FastbootDevice device = getSelectedDevice();
-			if(device.openConnection(this)) {
-				String filePath = ((EditText) findViewById(R.id.image_path)).getText().toString();
-				String partition = ((Spinner) findViewById(R.id.partition)).getSelectedItem().toString();
-				boolean disableVerity = ((CheckBox) findViewById(R.id.disable_verity)).isChecked();
-				boolean disableVerification = ((CheckBox) findViewById(R.id.disable_verification)).isChecked();
-				boolean raw = ((CheckBox) findViewById(R.id.raw)).isChecked();
+	private class FlashImageTask extends AsyncTask<Void, Integer, Exception> {
+		FlashImageTask(FastbootDevice device, String filePath, String partition, boolean raw, boolean disableVerity, boolean disableVerification) {
+			this.device = device;
+			this.filePath = filePath;
+			this.partition = partition;
+			this.raw = raw;
+			this.disableVerity = disableVerity;
+			this.disableVerification = disableVerification;
+		}
+		@Override
+		protected void onPreExecute() {
+			pd = new ProgressDialog(FastbootActivity.this);
+			pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			pd.setMessage(getResources().getString(R.string.sending));
+			pd.setCancelable(false);
+			pd.show();
+		}
+		@Override
+		protected void onProgressUpdate(Integer ... values) {
+			pd.setProgress(values[0]);
+			pd.setMax(values[1]);
+			if(values[0] == values[1])
+				pd.setMessage(String.format("%s '%s' %d/%d...", getResources().getString(R.string.writing), partition, values[2], values[3]));
+			else
+				pd.setMessage(String.format("%s '%s' %d/%d (%d KB)...", getResources().getString(R.string.sending), partition, values[2], values[3], values[1] / 1024));
+		}
+		@Override
+		protected void onPostExecute(Exception result) {
+			pd.dismiss();
+			if(result != null)
+				showToast(result);
+		}
 
+		private void downloadData(byte[] data, int part, int maxParts) {
+			int length = data.length;
+			int offset = 0;
+			device.downloadCommand(length);
+			int n = 0;
+			while(offset < length) {
+				offset = device.writeData(data, offset);
+				if(n++ % 300 == 0) // reduce lags
+					publishProgress(offset, length, part, maxParts);
+			}
+			device.checkOkay();
+			publishProgress(1, 1, part, maxParts);
+		}
+
+		@Override
+		protected Exception doInBackground(Void ... args) {
+			try {
 				File file = new File(filePath);
 				if (!file.exists() || !file.isFile())
 					throw new FileNotFoundException("File not found");
@@ -236,12 +278,31 @@ public class FastbootActivity extends Activity {
 				FileInputStream stream = new FileInputStream(file);
 				stream.read(data);
 
-				device.download(data);
+				downloadData(data, 1, 1);
 				device.flash(partition);
+			} catch(Exception e) {
+				return e;
 			}
-		} catch(Exception e) {
-			e.printStackTrace();
-			showToast(e);
+			return null;
+		}
+		private FastbootDevice device;
+		private String filePath;
+		private String partition;
+		private boolean raw;
+		private boolean disableVerity;
+		private boolean disableVerification;
+		private ProgressDialog pd;
+	}
+
+
+	public void flash(View view) {
+		if(getSelectedDevice().openConnection(this)) {
+			String filePath = ((EditText) findViewById(R.id.image_path)).getText().toString();
+			String partition = ((Spinner) findViewById(R.id.partition)).getSelectedItem().toString();
+			boolean disableVerity = ((CheckBox) findViewById(R.id.disable_verity)).isChecked();
+			boolean disableVerification = ((CheckBox) findViewById(R.id.disable_verification)).isChecked();
+			boolean raw = ((CheckBox) findViewById(R.id.raw)).isChecked();
+			new FlashImageTask(getSelectedDevice(), filePath, partition, raw, disableVerity, disableVerification).execute();
 		}
 	}
 }

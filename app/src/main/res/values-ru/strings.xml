@@ -48,6 +48,8 @@
 	<string name="boot">Загрузить образ</string>
 	<string name="flasher">Прошивка</string>
 	<string name="flash">Прошить</string>
+	<string name="sending">Передача</string>
+	<string name="writing">Прошивка</string>
 	<string name="format">Форматировать</string>
 	<string name="partition">Раздел</string>
 	<string name="flashing">Загрузчик</string>

@@ -61,18 +61,8 @@ class FastbootDevice {
 	}
 
 	private void rawCommand(String command) {
-		Log.d("ADB", command);
 		byte[] bytes = command.getBytes();
 		connection.bulkTransfer(out, bytes, bytes.length, 0);
-	}
-
-	private void writeData(byte[] data) {
-		int offset = 0;
-		while (offset < data.length) {
-			int size = Math.min(data.length - offset, out.getMaxPacketSize());
-			int bytesWritten = connection.bulkTransfer(out, Arrays.copyOfRange(data, offset, offset + size), size, 0);
-			offset += bytesWritten;
-		}
 	}
 
 	private String readOnce() {
@@ -81,7 +71,6 @@ class FastbootDevice {
 		String response = new String(bytes, 0, length);
 		if(response.startsWith("FAIL"))
 			throw new FastbootException(response);
-		Log.d("ADB", response);
 		return response;
 	}
 
@@ -91,8 +80,13 @@ class FastbootDevice {
 		String response = new String(bytes, 0, length);
 		if(!response.startsWith("OKAY"))
 			throw new FastbootException(response);
-		Log.d("ADB", response);
 		return response.substring(4);
+	}
+
+	public void checkOkay() {
+		String response = readOnce();
+		if(!response.equals("OKAY"))
+			throw new FastbootException(response);
 	}
 
 	public void erase(String partition) {
@@ -147,22 +141,23 @@ class FastbootDevice {
 		return list.toArray(new FastbootVariable[0]);
 	}
 
-	public void download(byte[] data) {
-		rawCommand(String.format("download:%08x", data.length));
+	public void downloadCommand(int length) {
+		rawCommand(String.format("download:%08x", length));
 		String response = readOnce();
-		if(!response.startsWith("DATA") || Integer.parseInt(response.substring(4), 16) != data.length)
+		if(!response.startsWith("DATA") || Integer.parseInt(response.substring(4), 16) != length)
 			throw new FastbootException("Invalid response");
-		Log.v("ADB", "Downloading...");
-		writeData(data);
-		Log.v("ADB", "Downloading OK");
-		readOkay();
+	}
+
+	public int writeData(byte[] data, int offset) {
+		int size = Math.min(data.length - offset, out.getMaxPacketSize());
+		int bytesWritten = connection.bulkTransfer(out, Arrays.copyOfRange(data, offset, offset + size), size, 0);
+		offset += bytesWritten;
+		return offset;
 	}
 
 	public void flash(String partition) {
-		Log.v("ADB", "Flashing...");
 		rawCommand("flash:" + partition);
 		readOnce();
-		Log.v("ADB", "Flashing OK");
 	}
 
 	private UsbManager manager;
