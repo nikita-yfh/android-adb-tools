@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.io.RandomAccessFile;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,6 +18,7 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbRequest;
 import android.util.Log;
 import ru.nikita.adb.FastbootVariable;
 import ru.nikita.adb.FastbootException;
@@ -61,23 +65,32 @@ class FastbootDevice {
 	}
 
 	private void rawCommand(String command) {
-		byte[] bytes = command.getBytes();
-		connection.bulkTransfer(out, bytes, bytes.length, 0);
+		UsbRequest request = new UsbRequest();
+		request.initialize(connection, out);
+		request.queue(ByteBuffer.allocate(command.length()).put(command.getBytes()), command.length());
+		connection.requestWait();
+		request.close();
 	}
 
 	private String readOnce() {
-		byte[] bytes = new byte[1024];
-		int length = connection.bulkTransfer(in, bytes, bytes.length, 0);
-		String response = new String(bytes, 0, length);
-		if(response.startsWith("FAIL"))
-			throw new FastbootException(response);
-		return response;
+		int bufferMaxLength = in.getMaxPacketSize();
+		ByteBuffer buffer = ByteBuffer.allocate(bufferMaxLength);
+		UsbRequest request = new UsbRequest();
+		request.initialize(connection, in);
+		request.queue(buffer, bufferMaxLength);
+		connection.requestWait();
+		request.close();
+
+		Log.v("ADB", String.format("Buffer position: %d, size: %d", buffer.position(), buffer.limit()));
+
+		String string = new String(buffer.array(), 0, buffer.position());
+		if(string.startsWith("FAIL"))
+			throw new FastbootException(string);
+		return string;
 	}
 
 	private String readOkay() {
-		byte[] bytes = new byte[1024];
-		int length = connection.bulkTransfer(in, bytes, bytes.length, 0);
-		String response = new String(bytes, 0, length);
+		String response = readOnce();
 		if(!response.startsWith("OKAY"))
 			throw new FastbootException(response);
 		return response.substring(4);
@@ -114,9 +127,9 @@ class FastbootDevice {
 		return readOkay();
 	}
 
-	public long getSparseLimit() {
+	public int getSparseLimit() {
 		String str = getVariable("max-download-size");
-		return Long.decode(str);
+		return Integer.decode(str);
 	}
 
 	public boolean hasVbmetaPartiton() {
@@ -141,23 +154,45 @@ class FastbootDevice {
 		return list.toArray(new FastbootVariable[0]);
 	}
 
-	public void downloadCommand(int length) {
+	public void downloadCommand(long length) {
 		rawCommand(String.format("download:%08x", length));
 		String response = readOnce();
 		if(!response.startsWith("DATA") || Integer.parseInt(response.substring(4), 16) != length)
 			throw new FastbootException("Invalid response");
 	}
 
-	public int writeData(byte[] data, int offset) {
-		int size = Math.min(data.length - offset, out.getMaxPacketSize());
-		int bytesWritten = connection.bulkTransfer(out, Arrays.copyOfRange(data, offset, offset + size), size, 0);
-		offset += bytesWritten;
-		return offset;
-	}
-
 	public void flash(String partition) {
 		rawCommand("flash:" + partition);
 		readOnce();
+	}
+
+	public class OutputStream {
+		OutputStream() {
+			request = new UsbRequest();
+			request.initialize(connection, out);
+		}
+		public void close() {
+			request.close();
+		}
+		public int write(byte[] data) {
+			if(!request.queue(ByteBuffer.allocate(data.length).put(data), data.length))
+				throw new FastbootException("Writing error");
+			if(connection.requestWait() == null)
+				throw new FastbootException("Writing error");
+			return data.length;
+		}
+		public int write(byte[] array, int offset) throws IOException {
+			int size = Math.min((int) array.length - offset, out.getMaxPacketSize());
+			byte[] data = new byte[size];
+			return write(data);
+		}
+		public int write(RandomAccessFile file, int count, int offset) throws IOException {
+			int size = Math.min((int) file.length() - offset, out.getMaxPacketSize());
+			byte[] data = new byte[size];
+			file.read(data, 0, size);
+			return write(data);
+		}
+		private UsbRequest request;
 	}
 
 	private UsbManager manager;

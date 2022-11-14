@@ -3,7 +3,7 @@ package ru.nikita.adb;
 import java.lang.RuntimeException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.io.DataOutputStream;
+import java.nio.ByteBuffer;
 
 public class SparseHeader {
 	public SparseHeader(RandomAccessFile file) throws IOException {
@@ -44,16 +44,16 @@ public class SparseHeader {
 		this.imageChecksum = 0;
 	}
 
-	public void write(DataOutputStream stream) throws IOException {
-		stream.writeInt(Integer.reverseBytes(magic));
-		stream.writeShort(Short.reverseBytes(majorVersion));
-		stream.writeShort(Short.reverseBytes(minorVersion));
-		stream.writeShort(Short.reverseBytes(fileHeaderSize));
-		stream.writeShort(Short.reverseBytes(chunkHeaderSize));
-		stream.writeInt(Integer.reverseBytes(blockSize));
-		stream.writeInt(Integer.reverseBytes(totalBlocks));
-		stream.writeInt(Integer.reverseBytes(totalChunks));
-		stream.writeInt(Integer.reverseBytes(imageChecksum));
+	public void write(ByteBuffer bytes) {
+		bytes.putInt(magic);
+		bytes.putShort(majorVersion);
+		bytes.putShort(minorVersion);
+		bytes.putShort(fileHeaderSize);
+		bytes.putShort(chunkHeaderSize);
+		bytes.putInt(blockSize);
+		bytes.putInt(totalBlocks);
+		bytes.putInt(totalChunks);
+		bytes.putInt(imageChecksum);
 	}
 
 	public long getLen() {

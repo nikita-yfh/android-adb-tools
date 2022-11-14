@@ -3,8 +3,8 @@ package ru.nikita.adb;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.Exception;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.RandomAccessFile;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import android.os.Bundle;
 import android.os.AsyncTask;
@@ -27,6 +27,7 @@ import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbDevice;
+import android.util.Log;
 import ru.nikita.adb.FastbootVariablesListActivity;
 import ru.nikita.adb.PartitionListActivity;
 import ru.nikita.adb.FastbootDevice;
@@ -239,47 +240,99 @@ public class FastbootActivity extends Activity {
 		protected void onProgressUpdate(Integer ... values) {
 			pd.setProgress(values[0]);
 			pd.setMax(values[1]);
+			String message = getResources().getString(R.string.sending);
 			if(values[0] == values[1])
-				pd.setMessage(String.format("%s '%s' %d/%d...", getResources().getString(R.string.writing), partition, values[2], values[3]));
-			else
-				pd.setMessage(String.format("%s '%s' %d/%d (%d KB)...", getResources().getString(R.string.sending), partition, values[2], values[3], values[1] / 1024));
+				message = getResources().getString(R.string.writing);
+			pd.setMessage(String.format("%s '%s' %d/%d", message, partition, values[2], values[3]));
 		}
 		@Override
 		protected void onPostExecute(Exception result) {
 			pd.dismiss();
-			if(result != null)
+			if(result != null) {
 				showToast(result);
+				result.printStackTrace();
+			}
 		}
 
-		private void downloadData(byte[] data, int part, int maxParts) {
-			int length = data.length;
-			int offset = 0;
-			device.downloadCommand(length);
-			int n = 0;
-			while(offset < length) {
-				offset = device.writeData(data, offset);
-				if(n++ % 300 == 0) // reduce lags
-					publishProgress(offset, length, part, maxParts);
-			}
+		//private class DownloadStream extends FastbootDevice.OutputStream {
+		//	DownloadStream(int length, int part, int maxParts) {
+		//		this.part = part;
+		//		this.maxParts = maxParts;
+		//		this.bytes = 0;
+		//	}
+
+		//	@Override
+		//	public synchronized void write(byte[] buffer, int offset, int count) {
+		//		Log.d("ADB", Integer.toString(bytes));
+		//		while(offset < count) {
+		//			int bytesWritten = device.writeData(buffer, offset);
+		//			offset += bytesWritten;
+		//			bytes += bytesWritten;
+		//			//publishProgress(bytes, 0x8000000, part, maxParts);
+		//		}
+		//	}
+
+		//	@Override
+		//	public synchronized void write(int b) {
+		//		Log.d("ADB", Integer.toString(bytes));
+		//		device.writeByte(b);
+		//		bytes++;
+		//		//publishProgress(bytes, 0x80000000, part, maxParts);
+		//	}
+
+		//	private int length;
+		//	private int part;
+		//	private int maxParts;
+		//}
+
+		private void downloadData(SparseFile file, int part, int maxParts) throws IOException {
+			byte[] data = file.getBytes();
+			device.downloadCommand(file.countLen());
+
+			RandomAccessFile f = new RandomAccessFile(String.format("/sdcard/sparse%d.img", part), "rw");
+			f.write(data);
+			f.close();
+
+			FastbootDevice.OutputStream stream = device.new OutputStream();
+			for(int bytes = 0; bytes < data.length; bytes += stream.write(data, bytes));
+			stream.close();
+
 			device.checkOkay();
 			publishProgress(1, 1, part, maxParts);
+		}
+
+		private void downloadData(RandomAccessFile file) throws IOException {
+			device.downloadCommand(file.length());
+
+			FastbootDevice.OutputStream stream = device.new OutputStream();
+			for(int bytes = 0; bytes < file.length(); bytes += stream.write(file, (int) file.length(), bytes));
+			stream.close();
+
+			device.checkOkay();
+			publishProgress(1, 1, 1, 1);
 		}
 
 		@Override
 		protected Exception doInBackground(Void ... args) {
 			try {
-				File file = new File(filePath);
-				if (!file.exists() || !file.isFile())
-					throw new FileNotFoundException("File not found");
-				long fileLength = file.length();
-				long sparseLimit = device.getSparseLimit();
+				RandomAccessFile file = new RandomAccessFile(filePath, "r");
+				int fileLength = (int) file.length();
+				int sparseLimit = device.getSparseLimit();
 
-				byte[] data = new byte[(int) file.length()];
-				FileInputStream stream = new FileInputStream(file);
-				stream.read(data);
-
-				downloadData(data, 1, 1);
-				device.flash(partition);
+				if(fileLength <= sparseLimit) {
+					downloadData(file);
+					device.flash(partition);
+				} else {
+					SparseFile sparse = new SparseFile(file);
+					SparseFile[] files = sparse.resparse(sparseLimit);
+					device.erase(partition);
+					for(int i = 0; i < files.length; i++) {
+						Log.v("ADB", "Downloading");
+						downloadData(files[i], i + 1, files.length);
+						Log.v("ADB", "Flashing");
+						device.flash(partition);
+					}
+				}
 			} catch(Exception e) {
 				return e;
 			}
@@ -293,7 +346,6 @@ public class FastbootActivity extends Activity {
 		private boolean disableVerification;
 		private ProgressDialog pd;
 	}
-
 
 	public void flash(View view) {
 		if(getSelectedDevice().openConnection(this)) {
