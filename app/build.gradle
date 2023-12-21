@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId "ru.nikita.adb"
         minSdkVersion 12
-        targetSdkVersion 20
-        versionCode 5
-        versionName "1.5"
+        targetSdkVersion 23
+        versionCode 6
+        versionName "1.5.1"
     }
     buildTypes {
         release {
